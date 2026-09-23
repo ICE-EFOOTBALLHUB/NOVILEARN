@@ -33,6 +33,16 @@ function showClasses(levelId, level) {
 
     levelsContainer.innerHTML = "";
 
+const backButton = document.createElement("button");
+
+backButton.textContent = "← Back";
+
+backButton.addEventListener("click", () => {
+    location.reload();
+});
+
+levelsContainer.appendChild(backButton);
+
     const title = document.createElement("h2");
     title.textContent = level.name;
 
