@@ -23,5 +23,32 @@ Object.entries(nigeria.levels).forEach(([levelId, level]) => {
         <p>Select this level to continue</p>
     `;
 
+    card.addEventListener("click", () => {
+        showClasses(levelId, level);
+    });
+
     levelsContainer.appendChild(card);
 });
+function showClasses(levelId, level) {
+
+    levelsContainer.innerHTML = "";
+
+    const title = document.createElement("h2");
+    title.textContent = level.name;
+
+    levelsContainer.appendChild(title);
+
+    Object.entries(level.classes).forEach(([classId, schoolClass]) => {
+
+        const card = document.createElement("div");
+
+        card.className = "level-card";
+
+        card.innerHTML = `
+            <h3>${schoolClass.name}</h3>
+            <p>Select this class to continue</p>
+        `;
+
+        levelsContainer.appendChild(card);
+    });
+}
