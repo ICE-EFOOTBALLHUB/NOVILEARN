@@ -277,7 +277,7 @@ async function showTopics(
     try {
 
         const topicUrl =
-            `./data/topics/primary_1/mathematics.json`;
+    `./data/topics/${currentClassId}/${currentSubjectId}.json`;
 
         const response =
             await fetch(
