@@ -525,3 +525,569 @@ async function showLesson(
     }
 
 }
+
+// ==============================
+// START PRACTICE
+// ==============================
+
+async function startPractice(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    levelsContainer.innerHTML = "";
+
+    const loading =
+        document.createElement("p");
+
+    loading.textContent =
+        "Loading questions...";
+
+    levelsContainer.appendChild(
+        loading
+    );
+
+    try {
+
+        const questionUrl =
+            `./data/questions/${classId}/${subjectId}/${topicId}.json`;
+
+        const response =
+            await fetch(
+                questionUrl
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Question file not found."
+            );
+
+        }
+
+        const questions =
+            await response.json();
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function showQuestion() {
+
+            levelsContainer.innerHTML = "";
+
+            if (
+                currentQuestion >=
+                questions.length
+            ) {
+
+                showResults(
+                    levelId,
+                    classId,
+                    subjectId,
+                    topicId,
+                    score,
+                    questions.length
+                );
+
+                return;
+
+            }
+
+            const question =
+                questions[
+                    currentQuestion
+                ];
+
+            const questionNumber =
+                document.createElement("p");
+
+            questionNumber.textContent =
+                `Question ${
+                    currentQuestion + 1
+                } of ${
+                    questions.length
+                }`;
+
+            levelsContainer.appendChild(
+                questionNumber
+            );
+
+            const questionTitle =
+                document.createElement("h2");
+
+            questionTitle.textContent =
+                question.question;
+
+            levelsContainer.appendChild(
+                questionTitle
+            );
+
+            const optionsContainer =
+                document.createElement("div");
+
+            question.options.forEach(
+                (option, index) => {
+
+                    const button =
+                        document.createElement("button");
+
+                    button.textContent =
+                        option;
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            if (answered) {
+                                return;
+                            }
+
+                            answered = true;
+
+                            const buttons =
+                                optionsContainer
+                                    .querySelectorAll(
+                                        "button"
+                                    );
+
+                            buttons.forEach(
+                                btn => {
+                                    btn.disabled =
+                                        true;
+                                }
+                            );
+
+                            if (
+                                index ===
+                                question.answer
+                            ) {
+
+                                score++;
+
+                                button.textContent =
+                                    `✓ ${option}`;
+
+                            } else {
+
+                                button.textContent =
+                                    `✗ ${option}`;
+
+                                buttons[
+                                    question.answer
+                                ].textContent =
+                                    `✓ ${question.options[
+                                        question.answer
+                                    ]}`;
+
+                            }
+
+                            const nextButton =
+                                document.createElement(
+                                    "button"
+                                );
+
+                            nextButton.textContent =
+                                currentQuestion ===
+                                questions.length - 1
+                                    ? "See Results"
+                                    : "Next Question";
+
+                            nextButton.addEventListener(
+                                "click",
+                                () => {
+
+                                    currentQuestion++;
+
+                                    answered =
+                                        false;
+
+                                    showQuestion();
+
+                                }
+                            );
+
+                            levelsContainer.appendChild(
+                                nextButton
+                            );
+
+                        }
+                    );
+
+                    optionsContainer.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+            levelsContainer.appendChild(
+                optionsContainer
+            );
+
+        }
+
+        showQuestion();
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = `
+            <p>
+                Unable to load questions.
+            </p>
+        `;
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+// ==============================
+// SAVE PROGRESS
+// ==============================
+
+function saveProgress(
+    levelId,
+    classId,
+    subjectId,
+    topicId,
+    score,
+    totalQuestions
+) {
+
+    const storageKey =
+        "novilearn_progress";
+
+    const existing =
+        JSON.parse(
+            localStorage.getItem(
+                storageKey
+            )
+        ) || {};
+
+    const topicKey =
+        `${levelId}_${classId}_${subjectId}_${topicId}`;
+
+    const accuracy =
+        Math.round(
+            (score / totalQuestions) *
+            100
+        );
+
+    if (!existing[topicKey]) {
+
+        existing[topicKey] = {
+            levelId,
+            classId,
+            subjectId,
+            topicId,
+            attempts: 0,
+            lastScore: 0,
+            bestScore: 0,
+            totalQuestions,
+            lastAccuracy: 0,
+            bestAccuracy: 0
+        };
+
+    }
+
+    const progress =
+        existing[topicKey];
+
+    progress.attempts++;
+
+    progress.lastScore =
+        score;
+
+    progress.lastAccuracy =
+        accuracy;
+
+    progress.bestScore =
+        Math.max(
+            progress.bestScore,
+            score
+        );
+
+    progress.bestAccuracy =
+        Math.max(
+            progress.bestAccuracy,
+            accuracy
+        );
+
+    progress.totalQuestions =
+        totalQuestions;
+
+    localStorage.setItem(
+        storageKey,
+        JSON.stringify(existing)
+    );
+
+}
+
+
+// ==============================
+// SHOW RESULTS
+// ==============================
+
+function showResults(
+    levelId,
+    classId,
+    subjectId,
+    topicId,
+    score,
+    totalQuestions
+) {
+
+    saveProgress(
+        levelId,
+        classId,
+        subjectId,
+        topicId,
+        score,
+        totalQuestions
+    );
+
+    levelsContainer.innerHTML = "";
+
+    const accuracy =
+        Math.round(
+            (score / totalQuestions) *
+            100
+        );
+
+    const result =
+        document.createElement("div");
+
+    result.innerHTML = `
+        <h2>
+            Practice Complete!
+        </h2>
+
+        <p>
+            Score:
+            <strong>
+                ${score}/${totalQuestions}
+            </strong>
+        </p>
+
+        <p>
+            Accuracy:
+            <strong>
+                ${accuracy}%
+            </strong>
+        </p>
+    `;
+
+    levelsContainer.appendChild(
+        result
+    );
+
+    const retryButton =
+        document.createElement("button");
+
+    retryButton.textContent =
+        "Try Again";
+
+    retryButton.addEventListener(
+        "click",
+        () => {
+
+            startPractice(
+                levelId,
+                classId,
+                subjectId,
+                topicId
+            );
+
+        }
+    );
+
+    levelsContainer.appendChild(
+        retryButton
+    );
+
+    const backButton =
+        document.createElement("button");
+
+    backButton.textContent =
+        "Back to Lesson";
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            showLesson(
+                levelId,
+                classId,
+                subjectId,
+                topicId
+            );
+
+        }
+    );
+
+    levelsContainer.appendChild(
+        backButton
+    );
+
+}
+
+
+// ==============================
+// SHOW PROGRESS
+// ==============================
+
+function showProgress() {
+
+    levelsContainer.innerHTML = "";
+
+    progressPage.innerHTML = "";
+
+    const progress =
+        JSON.parse(
+            localStorage.getItem(
+                "novilearn_progress"
+            )
+        ) || {};
+
+    const entries =
+        Object.values(
+            progress
+        );
+
+    const title =
+        document.createElement("h2");
+
+    title.textContent =
+        "My Progress";
+
+    progressPage.appendChild(
+        title
+    );
+
+    if (
+        entries.length === 0
+    ) {
+
+        progressPage.innerHTML += `
+            <p>
+                You haven't practiced any topics yet.
+            </p>
+        `;
+
+        return;
+
+    }
+
+    const totalAttempts =
+        entries.reduce(
+            (sum, item) =>
+                sum + item.attempts,
+            0
+        );
+
+    const bestAccuracy =
+        Math.max(
+            ...entries.map(
+                item =>
+                    item.bestAccuracy
+            )
+        );
+
+    progressPage.innerHTML += `
+        <div class="lesson-section">
+
+            <h3>
+                Overview
+            </h3>
+
+            <p>
+                Topics practiced:
+                <strong>
+                    ${entries.length}
+                </strong>
+            </p>
+
+            <p>
+                Total attempts:
+                <strong>
+                    ${totalAttempts}
+                </strong>
+            </p>
+
+            <p>
+                Best accuracy:
+                <strong>
+                    ${bestAccuracy}%
+                </strong>
+            </p>
+
+        </div>
+    `;
+
+    entries.forEach(
+        progress => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "lesson-section";
+
+            card.innerHTML = `
+                <h3>
+                    ${getTopicName(
+                        progress.levelId,
+                        progress.classId,
+                        progress.subjectId,
+                        progress.topicId
+                    )}
+                </h3>
+
+                <p>
+                    Subject:
+                    <strong>
+                        ${getSubjectName(
+                            progress.subjectId
+                        )}
+                    </strong>
+                </p>
+
+                <p>
+                    Best score:
+                    <strong>
+                        ${progress.bestScore}/${
+                            progress.totalQuestions
+                        }
+                    </strong>
+                </p>
+
+                <p>
+                    Best accuracy:
+                    <strong>
+                        ${progress.bestAccuracy}%
+                    </strong>
+                </p>
+
+                <p>
+                    Attempts:
+                    <strong>
+                        ${progress.attempts}
+                    </strong>
+                </p>
+            `;
+
+            progressPage.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
