@@ -1,0 +1,100 @@
+{
+  "primary": [
+    {
+      "id": "mathematics",
+      "name": "Mathematics"
+    },
+    {
+      "id": "english",
+      "name": "English Studies"
+    },
+    {
+      "id": "basic_science",
+      "name": "Basic Science"
+    },
+    {
+      "id": "social_studies",
+      "name": "Social Studies"
+    },
+    {
+      "id": "civic_education",
+      "name": "Civic Education"
+    },
+    {
+      "id": "computer_studies",
+      "name": "Computer Studies"
+    }
+  ],
+  "junior_secondary": [
+    {
+      "id": "mathematics",
+      "name": "Mathematics"
+    },
+    {
+      "id": "english",
+      "name": "English Studies"
+    },
+    {
+      "id": "basic_science",
+      "name": "Basic Science"
+    },
+    {
+      "id": "basic_technology",
+      "name": "Basic Technology"
+    },
+    {
+      "id": "social_studies",
+      "name": "Social Studies"
+    },
+    {
+      "id": "civic_education",
+      "name": "Civic Education"
+    },
+    {
+      "id": "computer_studies",
+      "name": "Computer Studies"
+    }
+  ],
+  "senior_secondary": [
+    {
+      "id": "mathematics",
+      "name": "Mathematics"
+    },
+    {
+      "id": "english",
+      "name": "English Language"
+    },
+    {
+      "id": "biology",
+      "name": "Biology"
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry"
+    },
+    {
+      "id": "physics",
+      "name": "Physics"
+    },
+    {
+      "id": "economics",
+      "name": "Economics"
+    },
+    {
+      "id": "government",
+      "name": "Government"
+    },
+    {
+      "id": "commerce",
+      "name": "Commerce"
+    },
+    {
+      "id": "literature",
+      "name": "Literature in English"
+    },
+    {
+      "id": "computer_science",
+      "name": "Computer Science"
+    }
+  ]
+}

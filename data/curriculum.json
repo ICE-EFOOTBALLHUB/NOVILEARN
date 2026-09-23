@@ -1,0 +1,59 @@
+
+{
+  "nigeria": {
+    "name": "Nigeria",
+    "levels": {
+      "primary": {
+        "name": "Primary School",
+        "classes": {
+          "primary_1": {
+            "name": "Primary 1"
+          },
+          "primary_2": {
+            "name": "Primary 2"
+          },
+          "primary_3": {
+            "name": "Primary 3"
+          },
+          "primary_4": {
+            "name": "Primary 4"
+          },
+          "primary_5": {
+            "name": "Primary 5"
+          },
+          "primary_6": {
+            "name": "Primary 6"
+          }
+        }
+      },
+      "junior_secondary": {
+        "name": "Junior Secondary School",
+        "classes": {
+          "jss_1": {
+            "name": "JSS 1"
+          },
+          "jss_2": {
+            "name": "JSS 2"
+          },
+          "jss_3": {
+            "name": "JSS 3"
+          }
+        }
+      },
+      "senior_secondary": {
+        "name": "Senior Secondary School",
+        "classes": {
+          "ss_1": {
+            "name": "SS 1"
+          },
+          "ss_2": {
+            "name": "SS 2"
+          },
+          "ss_3": {
+            "name": "SS 3"
+          }
+        }
+      }
+    }
+  }
+}
