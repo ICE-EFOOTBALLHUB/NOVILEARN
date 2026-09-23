@@ -24,14 +24,51 @@ Object.entries(nigeria.levels).forEach(([levelId, level]) => {
     `;
 
     card.addEventListener("click", () => {
-        showClasses(levelId, level);
-    });
+    showSubjects(levelId, classId, schoolClass);
+});
 
     levelsContainer.appendChild(card);
 });
 function showClasses(levelId, level) {
 
     levelsContainer.innerHTML = "";
+
+function showSubjects(levelId, classId, schoolClass) {
+
+    levelsContainer.innerHTML = "";
+
+    const backButton = document.createElement("button");
+
+    backButton.textContent = "← Back";
+
+    backButton.addEventListener("click", () => {
+        showClasses(levelId, nigeria.levels[levelId]);
+    });
+
+    levelsContainer.appendChild(backButton);
+
+    const title = document.createElement("h2");
+
+    title.textContent = schoolClass.name;
+
+    levelsContainer.appendChild(title);
+
+    const levelSubjects = subjects[levelId];
+
+    levelSubjects.forEach(subject => {
+
+        const card = document.createElement("div");
+
+        card.className = "level-card";
+
+        card.innerHTML = `
+            <h3>${subject.name}</h3>
+            <p>View lessons</p>
+        `;
+
+        levelsContainer.appendChild(card);
+    });
+}
 
 const backButton = document.createElement("button");
 
