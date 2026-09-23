@@ -299,7 +299,7 @@ function showLesson(levelId, classId, subjectId, topicId) {
     practiceButton.textContent = "Practice Questions";
 
     practiceButton.addEventListener("click", () => {
-        showQuestions(levelId, classId, subjectId, topicId);
+        startPractice(levelId, classId, subjectId, topicId);
     });
 
     levelsContainer.appendChild(practiceButton);
@@ -307,10 +307,10 @@ function showLesson(levelId, classId, subjectId, topicId) {
 
 
 // ==============================
-// SHOW PRACTICE QUESTIONS
+// START PRACTICE
 // ==============================
 
-function showQuestions(levelId, classId, subjectId, topicId) {
+function startPractice(levelId, classId, subjectId, topicId) {
 
     const questionList =
         questions.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
@@ -326,8 +326,43 @@ function showQuestions(levelId, classId, subjectId, topicId) {
     }
 
 
+    const practiceState = {
+        questions: questionList,
+        currentQuestion: 0,
+        score: 0
+    };
+
+
+    showQuestion(
+        levelId,
+        classId,
+        subjectId,
+        topicId,
+        practiceState
+    );
+}
+
+
+// ==============================
+// SHOW CURRENT QUESTION
+// ==============================
+
+function showQuestion(
+    levelId,
+    classId,
+    subjectId,
+    topicId,
+    practiceState
+) {
+
+    const question =
+        practiceState.questions[practiceState.currentQuestion];
+
+
     levelsContainer.innerHTML = "";
 
+
+    // Back button
 
     const backButton = document.createElement("button");
 
@@ -340,52 +375,222 @@ function showQuestions(levelId, classId, subjectId, topicId) {
     levelsContainer.appendChild(backButton);
 
 
+    // Progress
+
+    const progress = document.createElement("p");
+
+    progress.textContent =
+        `Question ${practiceState.currentQuestion + 1} of ${practiceState.questions.length}`;
+
+    levelsContainer.appendChild(progress);
+
+
+    // Question
+
+    const questionTitle = document.createElement("h2");
+
+    questionTitle.textContent = question.question;
+
+    levelsContainer.appendChild(questionTitle);
+
+
+    // Container for options
+
+    const optionsContainer = document.createElement("div");
+
+    levelsContainer.appendChild(optionsContainer);
+
+
+    let answered = false;
+
+
+    question.options.forEach((option, optionIndex) => {
+
+        const optionButton = document.createElement("button");
+
+        optionButton.textContent = option;
+
+        optionsContainer.appendChild(optionButton);
+
+
+        optionButton.addEventListener("click", () => {
+
+            if (answered) {
+                return;
+            }
+
+
+            answered = true;
+
+
+            // Disable every option
+
+            const allOptions =
+                optionsContainer.querySelectorAll("button");
+
+            allOptions.forEach(button => {
+                button.disabled = true;
+            });
+
+
+            // Check answer
+
+            if (optionIndex === question.answer) {
+
+                practiceState.score++;
+
+                optionButton.textContent =
+                    "✓ " + option;
+
+                const resultMessage =
+                    document.createElement("p");
+
+                resultMessage.textContent =
+                    "Correct! 🎉";
+
+                optionsContainer.appendChild(resultMessage);
+
+            } else {
+
+                optionButton.textContent =
+                    "✗ " + option;
+
+
+                const correctOption =
+                    question.options[question.answer];
+
+
+                const resultMessage =
+                    document.createElement("p");
+
+                resultMessage.textContent =
+                    `Correct answer: ${correctOption}`;
+
+                optionsContainer.appendChild(resultMessage);
+            }
+
+
+            // Next button
+
+            const nextButton =
+                document.createElement("button");
+
+            if (
+                practiceState.currentQuestion ===
+                practiceState.questions.length - 1
+            ) {
+
+                nextButton.textContent =
+                    "Finish Practice";
+
+            } else {
+
+                nextButton.textContent =
+                    "Next Question →";
+            }
+
+
+            nextButton.addEventListener("click", () => {
+
+                practiceState.currentQuestion++;
+
+
+                if (
+                    practiceState.currentQuestion >=
+                    practiceState.questions.length
+                ) {
+
+                    showResults(practiceState);
+
+                    return;
+                }
+
+
+                showQuestion(
+                    levelId,
+                    classId,
+                    subjectId,
+                    topicId,
+                    practiceState
+                );
+            });
+
+
+            levelsContainer.appendChild(nextButton);
+        });
+    });
+}
+
+
+// ==============================
+// SHOW RESULTS
+// ==============================
+
+function showResults(practiceState) {
+
+    levelsContainer.innerHTML = "";
+
+
     const title = document.createElement("h2");
 
-    title.textContent = "Practice Questions";
+    title.textContent = "Practice Complete 🎉";
 
     levelsContainer.appendChild(title);
 
 
-    questionList.forEach((question, index) => {
+    const score = document.createElement("p");
 
-        const questionCard = document.createElement("div");
+    score.textContent =
+        `Score: ${practiceState.score} / ${practiceState.questions.length}`;
 
-        questionCard.className = "lesson-section";
-
-
-        questionCard.innerHTML = `
-            <h3>Question ${index + 1}</h3>
-            <p>${question.question}</p>
-        `;
+    levelsContainer.appendChild(score);
 
 
-        question.options.forEach((option, optionIndex) => {
-
-            const optionButton = document.createElement("button");
-
-            optionButton.textContent = option;
-
-
-            optionButton.addEventListener("click", () => {
-
-                if (optionIndex === question.answer) {
-
-                    optionButton.textContent = "✓ " + option;
-
-                } else {
-
-                    optionButton.textContent = "✗ " + option;
-
-                }
-
-            });
+    const percentage = Math.round(
+        (practiceState.score /
+            practiceState.questions.length) * 100
+    );
 
 
-            questionCard.appendChild(optionButton);
-        });
+    const accuracy = document.createElement("p");
+
+    accuracy.textContent =
+        `Accuracy: ${percentage}%`;
+
+    levelsContainer.appendChild(accuracy);
 
 
-        levelsContainer.appendChild(questionCard);
+    // Try Again button
+
+    const retryButton = document.createElement("button");
+
+    retryButton.textContent = "Try Again";
+
+    retryButton.addEventListener("click", () => {
+
+        startPractice(
+            "primary",
+            "primary_1",
+            "mathematics",
+            "addition"
+        );
+
     });
+
+    levelsContainer.appendChild(retryButton);
+
+
+    // Back to home
+
+    const homeButton = document.createElement("button");
+
+    homeButton.textContent = "Back to Home";
+
+    homeButton.addEventListener("click", () => {
+
+        location.reload();
+
+    });
+
+    levelsContainer.appendChild(homeButton);
 }
