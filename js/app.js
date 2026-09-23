@@ -790,3 +790,13 @@ function showResults(practiceState) {
     levelsContainer.appendChild(homeButton);
 
 }
+
+document.getElementById("test-progress").addEventListener("click", () => {
+
+    const progress =
+        localStorage.getItem("novilearn_progress");
+
+    document.getElementById("progress-output").textContent =
+        progress || "No progress saved yet.";
+
+});
