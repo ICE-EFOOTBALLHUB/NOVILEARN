@@ -1091,3 +1091,121 @@ function showProgress() {
     );
 
 }
+
+// ==============================
+// LOAD LESSON TOPIC INDEX
+// ==============================
+
+const lessons =
+    await fetch("./data/lessons.json")
+        .then(response => response.json());
+
+
+// ==============================
+// GET SUBJECT NAME
+// ==============================
+
+function getSubjectName(
+    subjectId
+) {
+
+    const allSubjects =
+        subjects.primary
+            .concat(
+                subjects.junior_secondary
+            )
+            .concat(
+                subjects.senior_secondary
+            );
+
+    const subject =
+        allSubjects.find(
+            item =>
+                item.id === subjectId
+        );
+
+    return subject
+        ? subject.name
+        : subjectId;
+
+}
+
+
+// ==============================
+// GET TOPIC NAME
+// ==============================
+
+function getTopicName(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    const topic =
+        lessons.nigeria
+            ?.[levelId]
+            ?.[classId]
+            ?.[subjectId]
+            ?.[topicId];
+
+    return topic
+        ? topic.title
+        : topicId;
+
+}
+
+
+// ==============================
+// PROGRESS BUTTON
+// ==============================
+
+document
+    .getElementById("progress-button")
+    .addEventListener(
+        "click",
+        () => {
+
+            showProgress();
+
+        }
+    );
+
+
+// ==============================
+// TEMPORARY PROGRESS TEST
+// ==============================
+
+const testProgressButton =
+    document.getElementById(
+        "test-progress"
+    );
+
+if (testProgressButton) {
+
+    testProgressButton.addEventListener(
+        "click",
+        () => {
+
+            const progress =
+                localStorage.getItem(
+                    "novilearn_progress"
+                );
+
+            document.getElementById(
+                "progress-output"
+            ).textContent =
+                progress ||
+                "No progress saved yet.";
+
+        }
+    );
+
+}
+
+
+// ==============================
+// START APP
+// ==============================
+
+showLevels();
