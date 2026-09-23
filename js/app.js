@@ -228,3 +228,300 @@ function showSubjects(
     );
 
 }
+
+
+// ==============================
+// SHOW TOPICS
+// ==============================
+
+function showTopics(
+    levelId,
+    classId,
+    subjectId
+) {
+
+    levelsContainer.innerHTML = "";
+
+    const backButton =
+        document.createElement("button");
+
+    backButton.textContent =
+        "← Back";
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            showSubjects(
+                levelId,
+                classId
+            );
+
+        }
+    );
+
+    levelsContainer.appendChild(
+        backButton
+    );
+
+    const topicData =
+        lessons.nigeria
+            ?.[levelId]
+            ?.[classId]
+            ?.[subjectId];
+
+    if (!topicData) {
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            "No topics available yet.";
+
+        levelsContainer.appendChild(
+            message
+        );
+
+        return;
+
+    }
+
+    Object.entries(
+        topicData
+    ).forEach(
+        ([topicId, topic]) => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "level-card";
+
+            card.innerHTML = `
+                <h3>
+                    ${topic.title}
+                </h3>
+
+                <p>
+                    ${topic.description}
+                </p>
+            `;
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    currentTopicId =
+                        topicId;
+
+                    showLesson(
+                        levelId,
+                        classId,
+                        subjectId,
+                        topicId
+                    );
+
+                }
+            );
+
+            levelsContainer.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+// ==============================
+// SHOW LESSON
+// ==============================
+
+async function showLesson(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    levelsContainer.innerHTML = "";
+
+    const backButton =
+        document.createElement("button");
+
+    backButton.textContent =
+        "← Back";
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            showTopics(
+                levelId,
+                classId,
+                subjectId
+            );
+
+        }
+    );
+
+    levelsContainer.appendChild(
+        backButton
+    );
+
+    const loading =
+        document.createElement("p");
+
+    loading.textContent =
+        "Loading lesson...";
+
+    levelsContainer.appendChild(
+        loading
+    );
+
+    try {
+
+        const lessonUrl =
+            `./data/lessons/${classId}/${subjectId}/${topicId}.json`;
+
+        const response =
+            await fetch(
+                lessonUrl
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Lesson file not found."
+            );
+
+        }
+
+        const lesson =
+            await response.json();
+
+        levelsContainer.innerHTML = "";
+
+        levelsContainer.appendChild(
+            backButton
+        );
+
+        const title =
+            document.createElement("h2");
+
+        title.textContent =
+            lesson.title;
+
+        levelsContainer.appendChild(
+            title
+        );
+
+        const description =
+            document.createElement("p");
+
+        description.textContent =
+            lesson.description;
+
+        levelsContainer.appendChild(
+            description
+        );
+
+        lesson.content.forEach(
+            section => {
+
+                const sectionElement =
+                    document.createElement(
+                        "div"
+                    );
+
+                sectionElement.className =
+                    "lesson-section";
+
+                if (
+                    section.type ===
+                    "text"
+                ) {
+
+                    sectionElement.innerHTML = `
+                        <h3>
+                            ${section.title}
+                        </h3>
+
+                        <p>
+                            ${section.body}
+                        </p>
+                    `;
+
+                }
+
+                if (
+                    section.type ===
+                    "example"
+                ) {
+
+                    sectionElement.innerHTML = `
+                        <h3>
+                            Example
+                        </h3>
+
+                        <p>
+                            ${section.question}
+                        </p>
+
+                        <strong>
+                            Answer:
+                            ${section.answer}
+                        </strong>
+                    `;
+
+                }
+
+                levelsContainer.appendChild(
+                    sectionElement
+                );
+
+            }
+        );
+
+        const practiceButton =
+            document.createElement(
+                "button"
+            );
+
+        practiceButton.textContent =
+            "Practice Questions";
+
+        practiceButton.addEventListener(
+            "click",
+            () => {
+
+                startPractice(
+                    levelId,
+                    classId,
+                    subjectId,
+                    topicId
+                );
+
+            }
+        );
+
+        levelsContainer.appendChild(
+            practiceButton
+        );
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = `
+            <p>
+                Unable to load lesson.
+            </p>
+        `;
+
+        console.error(
+            error
+        );
+
+    }
+
+}
