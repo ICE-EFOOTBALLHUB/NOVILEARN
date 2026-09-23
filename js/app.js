@@ -200,6 +200,91 @@ function showTopics(levelId, classId, subjectId) {
             <p>${topic.description}</p>
         `;
 
+        card.addEventListener("click", () => {
+            showLesson(levelId, classId, subjectId, topicId);
+        });
+
         levelsContainer.appendChild(card);
+    });
+}
+
+
+// ==============================
+// SHOW LESSON
+// ==============================
+
+function showLesson(levelId, classId, subjectId, topicId) {
+
+    const lesson =
+        lessons.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
+
+
+    if (!lesson) {
+
+        levelsContainer.innerHTML = `
+            <p>Lesson not found.</p>
+        `;
+
+        return;
+    }
+
+
+    levelsContainer.innerHTML = "";
+
+
+    const backButton = document.createElement("button");
+
+    backButton.textContent = "← Back";
+
+    backButton.addEventListener("click", () => {
+        showTopics(levelId, classId, subjectId);
+    });
+
+    levelsContainer.appendChild(backButton);
+
+
+    const title = document.createElement("h2");
+
+    title.textContent = lesson.title;
+
+    levelsContainer.appendChild(title);
+
+
+    const description = document.createElement("p");
+
+    description.textContent = lesson.description;
+
+    levelsContainer.appendChild(description);
+
+
+    lesson.content.forEach(item => {
+
+        const section = document.createElement("div");
+
+        section.className = "lesson-section";
+
+
+        if (item.type === "text") {
+
+            section.innerHTML = `
+                <h3>${item.title}</h3>
+                <p>${item.body}</p>
+            `;
+
+        }
+
+
+        if (item.type === "example") {
+
+            section.innerHTML = `
+                <h3>Example</h3>
+                <p>${item.question}</p>
+                <strong>Answer: ${item.answer}</strong>
+            `;
+
+        }
+
+
+        levelsContainer.appendChild(section);
     });
 }
