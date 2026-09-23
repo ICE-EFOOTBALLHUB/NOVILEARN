@@ -375,8 +375,6 @@ function showQuestion(practiceState) {
     levelsContainer.innerHTML = "";
 
 
-    // Back button
-
     const backButton = document.createElement("button");
 
     backButton.textContent = "← Back";
@@ -395,8 +393,6 @@ function showQuestion(practiceState) {
     levelsContainer.appendChild(backButton);
 
 
-    // Progress
-
     const progress = document.createElement("p");
 
     progress.textContent =
@@ -409,16 +405,12 @@ function showQuestion(practiceState) {
     levelsContainer.appendChild(progress);
 
 
-    // Question
-
     const questionTitle = document.createElement("h2");
 
     questionTitle.textContent = question.question;
 
     levelsContainer.appendChild(questionTitle);
 
-
-    // Options
 
     const optionsContainer = document.createElement("div");
 
@@ -448,19 +440,13 @@ function showQuestion(practiceState) {
             answered = true;
 
 
-            // Disable all options
-
             const allOptions =
                 optionsContainer.querySelectorAll("button");
 
             allOptions.forEach(button => {
-
                 button.disabled = true;
-
             });
 
-
-            // Check answer
 
             if (optionIndex === question.answer) {
 
@@ -506,8 +492,6 @@ function showQuestion(practiceState) {
             }
 
 
-            // Next button
-
             const nextButton =
                 document.createElement("button");
 
@@ -541,7 +525,6 @@ function showQuestion(practiceState) {
                     showResults(practiceState);
 
                     return;
-
                 }
 
 
@@ -560,10 +543,111 @@ function showQuestion(practiceState) {
 
 
 // ==============================
+// SAVE PROGRESS
+// ==============================
+
+function saveProgress(practiceState) {
+
+    const progressKey = "novilearn_progress";
+
+
+    const savedProgress =
+        JSON.parse(
+            localStorage.getItem(progressKey)
+        ) || {};
+
+
+    const topicKey =
+        `${practiceState.levelId}_${practiceState.classId}_${practiceState.subjectId}_${practiceState.topicId}`;
+
+
+    const totalQuestions =
+        practiceState.questions.length;
+
+
+    const score =
+        practiceState.score;
+
+
+    const percentage =
+        Math.round(
+            (score / totalQuestions) * 100
+        );
+
+
+    const existing =
+        savedProgress[topicKey];
+
+
+    if (!existing) {
+
+        savedProgress[topicKey] = {
+
+            levelId: practiceState.levelId,
+
+            classId: practiceState.classId,
+
+            subjectId: practiceState.subjectId,
+
+            topicId: practiceState.topicId,
+
+            attempts: 1,
+
+            lastScore: score,
+
+            bestScore: score,
+
+            totalQuestions: totalQuestions,
+
+            lastAccuracy: percentage,
+
+            bestAccuracy: percentage
+
+        };
+
+    } else {
+
+        existing.attempts++;
+
+        existing.lastScore = score;
+
+        existing.lastAccuracy = percentage;
+
+
+        if (score > existing.bestScore) {
+
+            existing.bestScore = score;
+
+        }
+
+
+        if (percentage > existing.bestAccuracy) {
+
+            existing.bestAccuracy = percentage;
+
+        }
+
+    }
+
+
+    localStorage.setItem(
+        progressKey,
+        JSON.stringify(savedProgress)
+    );
+
+}
+
+
+// ==============================
 // SHOW RESULTS
 // ==============================
 
 function showResults(practiceState) {
+
+    // Save the completed practice
+
+    saveProgress(practiceState);
+
 
     levelsContainer.innerHTML = "";
 
@@ -582,8 +666,6 @@ function showResults(practiceState) {
         );
 
 
-    // Title
-
     const title =
         document.createElement("h2");
 
@@ -592,8 +674,6 @@ function showResults(practiceState) {
 
     levelsContainer.appendChild(title);
 
-
-    // Score
 
     const scoreText =
         document.createElement("p");
@@ -604,8 +684,6 @@ function showResults(practiceState) {
     levelsContainer.appendChild(scoreText);
 
 
-    // Accuracy
-
     const accuracyText =
         document.createElement("p");
 
@@ -614,8 +692,6 @@ function showResults(practiceState) {
 
     levelsContainer.appendChild(accuracyText);
 
-
-    // Performance message
 
     const performance =
         document.createElement("p");
@@ -671,7 +747,7 @@ function showResults(practiceState) {
     levelsContainer.appendChild(retryButton);
 
 
-    // Back to lesson
+    // Back to Lesson
 
     const lessonButton =
         document.createElement("button");
@@ -695,7 +771,7 @@ function showResults(practiceState) {
     levelsContainer.appendChild(lessonButton);
 
 
-    // Back to home
+    // Back to Home
 
     const homeButton =
         document.createElement("button");
