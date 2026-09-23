@@ -7,9 +7,6 @@ const subjects = await fetch("./data/subjects.json")
 const lessons = await fetch("./data/lessons.json")
     .then(response => response.json());
 
-const questions = await fetch("./data/questions.json")
-    .then(response => response.json());
-
 
 const levelsContainer = document.getElementById("levels");
 
@@ -317,46 +314,82 @@ function showLesson(levelId, classId, subjectId, topicId) {
 // START PRACTICE
 // ==============================
 
-function startPractice(
+async function startPractice(
     levelId,
     classId,
     subjectId,
     topicId
 ) {
 
-    const questionList =
-        questions.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
+    try {
+
+        const response = await fetch(
+            `./data/questions/${classId}/${subjectId}/${topicId}.json`
+        );
 
 
-    if (!questionList || questionList.length === 0) {
+        if (!response.ok) {
+
+            throw new Error(
+                "Questions could not be loaded."
+            );
+
+        }
+
+
+        const questionList =
+            await response.json();
+
+
+        if (
+            !questionList ||
+            questionList.length === 0
+        ) {
+
+            levelsContainer.innerHTML = `
+                <p>No practice questions available yet.</p>
+            `;
+
+            return;
+        }
+
+
+        const practiceState = {
+
+            levelId: levelId,
+
+            classId: classId,
+
+            subjectId: subjectId,
+
+            topicId: topicId,
+
+            questions: questionList,
+
+            currentQuestion: 0,
+
+            score: 0
+
+        };
+
+
+        showQuestion(practiceState);
+
+
+    } catch (error) {
+
+        console.error(error);
+
 
         levelsContainer.innerHTML = `
-            <p>No practice questions available yet.</p>
+            <p>
+                Unable to load practice questions.
+                Please try again.
+            </p>
         `;
 
-        return;
     }
 
-
-    const practiceState = {
-
-        levelId: levelId,
-
-        classId: classId,
-
-        subjectId: subjectId,
-
-        topicId: topicId,
-
-        questions: questionList,
-
-        currentQuestion: 0,
-
-        score: 0
-    };
-
-
-    showQuestion(practiceState);
 }
 
 
@@ -374,6 +407,8 @@ function showQuestion(practiceState) {
 
     levelsContainer.innerHTML = "";
 
+
+    // Back button
 
     const backButton = document.createElement("button");
 
@@ -393,6 +428,8 @@ function showQuestion(practiceState) {
     levelsContainer.appendChild(backButton);
 
 
+    // Progress
+
     const progress = document.createElement("p");
 
     progress.textContent =
@@ -405,12 +442,16 @@ function showQuestion(practiceState) {
     levelsContainer.appendChild(progress);
 
 
+    // Question
+
     const questionTitle = document.createElement("h2");
 
     questionTitle.textContent = question.question;
 
     levelsContainer.appendChild(questionTitle);
 
+
+    // Options
 
     const optionsContainer = document.createElement("div");
 
@@ -440,6 +481,8 @@ function showQuestion(practiceState) {
             answered = true;
 
 
+            // Disable all options
+
             const allOptions =
                 optionsContainer.querySelectorAll("button");
 
@@ -447,6 +490,8 @@ function showQuestion(practiceState) {
                 button.disabled = true;
             });
 
+
+            // Check answer
 
             if (optionIndex === question.answer) {
 
@@ -491,6 +536,8 @@ function showQuestion(practiceState) {
 
             }
 
+
+            // Next button
 
             const nextButton =
                 document.createElement("button");
@@ -548,7 +595,8 @@ function showQuestion(practiceState) {
 
 function saveProgress(practiceState) {
 
-    const progressKey = "novilearn_progress";
+    const progressKey =
+        "novilearn_progress";
 
 
     const savedProgress =
@@ -583,25 +631,34 @@ function saveProgress(practiceState) {
 
         savedProgress[topicKey] = {
 
-            levelId: practiceState.levelId,
+            levelId:
+                practiceState.levelId,
 
-            classId: practiceState.classId,
+            classId:
+                practiceState.classId,
 
-            subjectId: practiceState.subjectId,
+            subjectId:
+                practiceState.subjectId,
 
-            topicId: practiceState.topicId,
+            topicId:
+                practiceState.topicId,
 
             attempts: 1,
 
-            lastScore: score,
+            lastScore:
+                score,
 
-            bestScore: score,
+            bestScore:
+                score,
 
-            totalQuestions: totalQuestions,
+            totalQuestions:
+                totalQuestions,
 
-            lastAccuracy: percentage,
+            lastAccuracy:
+                percentage,
 
-            bestAccuracy: percentage
+            bestAccuracy:
+                percentage
 
         };
 
@@ -609,21 +666,31 @@ function saveProgress(practiceState) {
 
         existing.attempts++;
 
-        existing.lastScore = score;
+        existing.lastScore =
+            score;
 
-        existing.lastAccuracy = percentage;
+        existing.lastAccuracy =
+            percentage;
 
 
-        if (score > existing.bestScore) {
+        if (
+            score >
+            existing.bestScore
+        ) {
 
-            existing.bestScore = score;
+            existing.bestScore =
+                score;
 
         }
 
 
-        if (percentage > existing.bestAccuracy) {
+        if (
+            percentage >
+            existing.bestAccuracy
+        ) {
 
-            existing.bestAccuracy = percentage;
+            existing.bestAccuracy =
+                percentage;
 
         }
 
@@ -644,7 +711,7 @@ function saveProgress(practiceState) {
 
 function showResults(practiceState) {
 
-    // Save the completed practice
+    // Save completed practice
 
     saveProgress(practiceState);
 
@@ -666,6 +733,8 @@ function showResults(practiceState) {
         );
 
 
+    // Title
+
     const title =
         document.createElement("h2");
 
@@ -674,6 +743,8 @@ function showResults(practiceState) {
 
     levelsContainer.appendChild(title);
 
+
+    // Score
 
     const scoreText =
         document.createElement("p");
@@ -684,14 +755,20 @@ function showResults(practiceState) {
     levelsContainer.appendChild(scoreText);
 
 
+    // Accuracy
+
     const accuracyText =
         document.createElement("p");
 
     accuracyText.textContent =
         `Accuracy: ${percentage}%`;
 
-    levelsContainer.appendChild(accuracyText);
+    levelsContainer.appendChild(
+        accuracyText
+    );
 
+
+    // Performance message
 
     const performance =
         document.createElement("p");
@@ -720,7 +797,9 @@ function showResults(practiceState) {
     }
 
 
-    levelsContainer.appendChild(performance);
+    levelsContainer.appendChild(
+        performance
+    );
 
 
     // Try Again
@@ -744,7 +823,9 @@ function showResults(practiceState) {
     });
 
 
-    levelsContainer.appendChild(retryButton);
+    levelsContainer.appendChild(
+        retryButton
+    );
 
 
     // Back to Lesson
@@ -768,7 +849,9 @@ function showResults(practiceState) {
     });
 
 
-    levelsContainer.appendChild(lessonButton);
+    levelsContainer.appendChild(
+        lessonButton
+    );
 
 
     // Back to Home
@@ -787,19 +870,13 @@ function showResults(practiceState) {
     });
 
 
-    levelsContainer.appendChild(homeButton);
+    levelsContainer.appendChild(
+        homeButton
+    );
 
 }
 
-document.getElementById("test-progress").addEventListener("click", () => {
 
-    const progress =
-        localStorage.getItem("novilearn_progress");
-
-    document.getElementById("progress-output").textContent =
-        progress || "No progress saved yet.";
-
-});
 // ==============================
 // SHOW PROGRESS
 // ==============================
@@ -807,6 +884,7 @@ document.getElementById("test-progress").addEventListener("click", () => {
 function showProgress() {
 
     levelsContainer.innerHTML = "";
+
 
     const progressPage =
         document.getElementById("progress-page");
@@ -817,7 +895,9 @@ function showProgress() {
     const backButton =
         document.createElement("button");
 
-    backButton.textContent = "← Back";
+    backButton.textContent =
+        "← Back";
+
 
     backButton.addEventListener("click", () => {
 
@@ -827,20 +907,29 @@ function showProgress() {
 
     });
 
-    progressPage.appendChild(backButton);
+
+    progressPage.appendChild(
+        backButton
+    );
 
 
     const title =
         document.createElement("h2");
 
-    title.textContent = "My Progress";
+    title.textContent =
+        "My Progress";
 
-    progressPage.appendChild(title);
+
+    progressPage.appendChild(
+        title
+    );
 
 
     const savedProgress =
         JSON.parse(
-            localStorage.getItem("novilearn_progress")
+            localStorage.getItem(
+                "novilearn_progress"
+            )
         ) || {};
 
 
@@ -848,7 +937,7 @@ function showProgress() {
         Object.values(savedProgress);
 
 
-    // No progress yet
+    // No progress
 
     if (progressEntries.length === 0) {
 
@@ -858,7 +947,9 @@ function showProgress() {
         message.textContent =
             "You haven't completed any practice yet.";
 
-        progressPage.appendChild(message);
+        progressPage.appendChild(
+            message
+        );
 
         return;
     }
@@ -875,9 +966,14 @@ function showProgress() {
 
     progressEntries.forEach(progress => {
 
-        totalAttempts += progress.attempts;
+        totalAttempts +=
+            progress.attempts;
 
-        if (progress.bestAccuracy > highestAccuracy) {
+
+        if (
+            progress.bestAccuracy >
+            highestAccuracy
+        ) {
 
             highestAccuracy =
                 progress.bestAccuracy;
@@ -890,7 +986,8 @@ function showProgress() {
     const summary =
         document.createElement("div");
 
-    summary.className = "lesson-section";
+    summary.className =
+        "lesson-section";
 
 
     summary.innerHTML = `
@@ -898,22 +995,30 @@ function showProgress() {
 
         <p>
             Topics Practiced:
-            <strong>${progressEntries.length}</strong>
+            <strong>
+                ${progressEntries.length}
+            </strong>
         </p>
 
         <p>
             Total Attempts:
-            <strong>${totalAttempts}</strong>
+            <strong>
+                ${totalAttempts}
+            </strong>
         </p>
 
         <p>
             Best Accuracy:
-            <strong>${highestAccuracy}%</strong>
+            <strong>
+                ${highestAccuracy}%
+            </strong>
         </p>
     `;
 
 
-    progressPage.appendChild(summary);
+    progressPage.appendChild(
+        summary
+    );
 
 
     // ==============================
@@ -930,7 +1035,9 @@ function showProgress() {
 
 
         const subjectName =
-            getSubjectName(progress.subjectId);
+            getSubjectName(
+                progress.subjectId
+            );
 
 
         const className =
@@ -938,7 +1045,8 @@ function showProgress() {
                 progress.levelId
             ]?.classes[
                 progress.classId
-            ]?.name || progress.classId;
+            ]?.name ||
+            progress.classId;
 
 
         const topicName =
@@ -976,78 +1084,4 @@ function showProgress() {
             <p>
                 Attempts:
                 <strong>
-                    ${progress.attempts}
-                </strong>
-            </p>
-        `;
-
-
-        progressPage.appendChild(card);
-
-    });
-
-}
-
-
-// ==============================
-// GET SUBJECT NAME
-// ==============================
-
-function getSubjectName(subjectId) {
-
-    const allSubjects =
-        subjects.primary
-            .concat(subjects.junior_secondary)
-            .concat(subjects.senior_secondary);
-
-
-    const subject =
-        allSubjects.find(
-            item => item.id === subjectId
-        );
-
-
-    return subject
-        ? subject.name
-        : subjectId;
-
-}
-
-
-// ==============================
-// GET TOPIC NAME
-// ==============================
-
-function getTopicName(
-    levelId,
-    classId,
-    subjectId,
-    topicId
-) {
-
-    const topic =
-        lessons.nigeria
-            ?.[levelId]
-            ?.[classId]
-            ?.[subjectId]
-            ?.[topicId];
-
-
-    return topic
-        ? topic.title
-        : topicId;
-
-}
-
-
-// ==============================
-// PROGRESS BUTTON
-// ==============================
-
-document
-    .getElementById("progress-button")
-    .addEventListener("click", () => {
-
-        showProgress();
-
-    });
+                    ${progress.atte
