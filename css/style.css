@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7f6;
+    color: #222;
+}
+
+header {
+    background: #087f5b;
+    color: white;
+    padding: 30px 20px;
+}
+
+header h1 {
+    font-size: 32px;
+}
+
+header p {
+    margin-top: 5px;
+}
+
+main {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+#levels {
+    display: grid;
+    gap: 15px;
+}
+
+.level-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+.level-card:hover {
+    border-color: #087f5b;
+}
