@@ -7,6 +7,9 @@ const subjects = await fetch("./data/subjects.json")
 const lessons = await fetch("./data/lessons.json")
     .then(response => response.json());
 
+const questions = await fetch("./data/questions.json")
+    .then(response => response.json());
+
 
 const levelsContainer = document.getElementById("levels");
 
@@ -286,5 +289,103 @@ function showLesson(levelId, classId, subjectId, topicId) {
 
 
         levelsContainer.appendChild(section);
+    });
+
+
+    // Practice Questions button
+
+    const practiceButton = document.createElement("button");
+
+    practiceButton.textContent = "Practice Questions";
+
+    practiceButton.addEventListener("click", () => {
+        showQuestions(levelId, classId, subjectId, topicId);
+    });
+
+    levelsContainer.appendChild(practiceButton);
+}
+
+
+// ==============================
+// SHOW PRACTICE QUESTIONS
+// ==============================
+
+function showQuestions(levelId, classId, subjectId, topicId) {
+
+    const questionList =
+        questions.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
+
+
+    if (!questionList || questionList.length === 0) {
+
+        levelsContainer.innerHTML = `
+            <p>No practice questions available yet.</p>
+        `;
+
+        return;
+    }
+
+
+    levelsContainer.innerHTML = "";
+
+
+    const backButton = document.createElement("button");
+
+    backButton.textContent = "← Back";
+
+    backButton.addEventListener("click", () => {
+        showLesson(levelId, classId, subjectId, topicId);
+    });
+
+    levelsContainer.appendChild(backButton);
+
+
+    const title = document.createElement("h2");
+
+    title.textContent = "Practice Questions";
+
+    levelsContainer.appendChild(title);
+
+
+    questionList.forEach((question, index) => {
+
+        const questionCard = document.createElement("div");
+
+        questionCard.className = "lesson-section";
+
+
+        questionCard.innerHTML = `
+            <h3>Question ${index + 1}</h3>
+            <p>${question.question}</p>
+        `;
+
+
+        question.options.forEach((option, optionIndex) => {
+
+            const optionButton = document.createElement("button");
+
+            optionButton.textContent = option;
+
+
+            optionButton.addEventListener("click", () => {
+
+                if (optionIndex === question.answer) {
+
+                    optionButton.textContent = "✓ " + option;
+
+                } else {
+
+                    optionButton.textContent = "✗ " + option;
+
+                }
+
+            });
+
+
+            questionCard.appendChild(optionButton);
+        });
+
+
+        levelsContainer.appendChild(questionCard);
     });
 }
