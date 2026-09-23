@@ -1,0 +1,26 @@
+{
+  "nigeria": {
+    "primary": {
+      "primary_1": {
+        "mathematics": {
+          "addition": {
+            "title": "Introduction to Addition",
+            "description": "Learn how to combine two or more numbers.",
+            "content": [
+              {
+                "type": "text",
+                "title": "What is Addition?",
+                "body": "Addition means putting numbers together to find how many there are altogether."
+              },
+              {
+                "type": "example",
+                "question": "2 + 3",
+                "answer": "5"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
