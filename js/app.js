@@ -1021,5 +1021,230 @@ function showProgress() {
     ) {
 
         progressPage.innerHTML += `
+                    <p>
+            You haven't practiced any topics yet.
+        </p>
+    `;
+
+    return;
+
+}
+
+
+const totalAttempts =
+    entries.reduce(
+        (sum, item) =>
+            sum + item.attempts,
+        0
+    );
+
+
+const bestAccuracy =
+    Math.max(
+        ...entries.map(
+            item =>
+                item.bestAccuracy
+        )
+    );
+
+
+progressPage.innerHTML += `
+    <div class="lesson-section">
+
+        <h3>
+            Overview
+        </h3>
+
+        <p>
+            Topics practiced:
+            <strong>
+                ${entries.length}
+            </strong>
+        </p>
+
+        <p>
+            Total attempts:
+            <strong>
+                ${totalAttempts}
+            </strong>
+        </p>
+
+        <p>
+            Best accuracy:
+            <strong>
+                ${bestAccuracy}%
+            </strong>
+        </p>
+
+    </div>
+`;
+
+
+entries.forEach(
+    progress => {
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "lesson-section";
+
+
+        card.innerHTML = `
+            <h3>
+                ${getTopicName(
+                    progress.levelId,
+                    progress.classId,
+                    progress.subjectId,
+                    progress.topicId
+                )}
+            </h3>
+
             <p>
-                You haven't practiced any topics 
+                Subject:
+                <strong>
+                    ${getSubjectName(
+                        progress.subjectId
+                    )}
+                </strong>
+            </p>
+
+            <p>
+                Best score:
+                <strong>
+                    ${progress.bestScore}/${
+                        progress.totalQuestions
+                    }
+                </strong>
+            </p>
+
+            <p>
+                Best accuracy:
+                <strong>
+                    ${progress.bestAccuracy}%
+                </strong>
+            </p>
+
+            <p>
+                Attempts:
+                <strong>
+                    ${progress.attempts}
+                </strong>
+            </p>
+        `;
+
+
+        progressPage.appendChild(
+            card
+        );
+
+    }
+);
+
+
+// ==============================
+// GET SUBJECT NAME
+// ==============================
+
+function getSubjectName(
+    subjectId
+) {
+
+    const allSubjects =
+        subjects.primary
+            .concat(
+                subjects.junior_secondary
+            )
+            .concat(
+                subjects.senior_secondary
+            );
+
+
+    const subject =
+        allSubjects.find(
+            item =>
+                item.id === subjectId
+        );
+
+
+    return subject
+        ? subject.name
+        : subjectId;
+
+}
+
+
+// ==============================
+// GET TOPIC NAME
+// ==============================
+
+function getTopicName(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    return topicId;
+
+}
+
+
+// ==============================
+// PROGRESS BUTTON
+// ==============================
+
+document
+    .getElementById("progress-button")
+    .addEventListener(
+        "click",
+        () => {
+
+            showProgress();
+
+        }
+    );
+
+
+// ==============================
+// TEMPORARY PROGRESS TEST
+// ==============================
+
+const testProgressButton =
+    document.getElementById(
+        "test-progress"
+    );
+
+
+if (testProgressButton) {
+
+    testProgressButton.addEventListener(
+        "click",
+        () => {
+
+            const progress =
+                localStorage.getItem(
+                    "novilearn_progress"
+                );
+
+
+            document.getElementById(
+                "progress-output"
+            ).textContent =
+                progress ||
+                "No progress saved yet.";
+
+        }
+    );
+
+}
+
+
+// ==============================
+// START APP
+// ==============================
+
+showLevels();
