@@ -234,7 +234,7 @@ function showSubjects(
 // SHOW TOPICS
 // ==============================
 
-function showTopics(
+async function showTopics(
     levelId,
     classId,
     subjectId
@@ -264,75 +264,111 @@ function showTopics(
         backButton
     );
 
-    const topicData =
-        lessons.nigeria
-            ?.[levelId]
-            ?.[classId]
-            ?.[subjectId];
+    const loading =
+        document.createElement("p");
 
-    if (!topicData) {
+    loading.textContent =
+        "Loading topics...";
+
+    levelsContainer.appendChild(
+        loading
+    );
+
+    try {
+
+        const topicUrl =
+            `./data/topics/${classId}/${subjectId}.json`;
+
+        const response =
+            await fetch(
+                topicUrl
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Topic file not found."
+            );
+
+        }
+
+        const topics =
+            await response.json();
+
+        levelsContainer.innerHTML = "";
+
+        levelsContainer.appendChild(
+            backButton
+        );
+
+        topics.forEach(
+            topic => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "level-card";
+
+                card.innerHTML = `
+                    <h3>
+                        ${topic.title}
+                    </h3>
+
+                    <p>
+                        ${topic.description}
+                    </p>
+                `;
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        currentTopicId =
+                            topic.id;
+
+                        showLesson(
+                            levelId,
+                            classId,
+                            subjectId,
+                            topic.id
+                        );
+
+                    }
+                );
+
+                levelsContainer.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = "";
+
+        levelsContainer.appendChild(
+            backButton
+        );
 
         const message =
             document.createElement("p");
 
         message.textContent =
-            "No topics available yet.";
+            "Unable to load topics.";
 
         levelsContainer.appendChild(
             message
         );
 
-        return;
+        console.error(
+            error
+        );
 
     }
 
-    Object.entries(
-        topicData
-    ).forEach(
-        ([topicId, topic]) => {
-
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "level-card";
-
-            card.innerHTML = `
-                <h3>
-                    ${topic.title}
-                </h3>
-
-                <p>
-                    ${topic.description}
-                </p>
-            `;
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    currentTopicId =
-                        topicId;
-
-                    showLesson(
-                        levelId,
-                        classId,
-                        subjectId,
-                        topicId
-                    );
-
-                }
-            );
-
-            levelsContainer.appendChild(
-                card
-            );
-
-        }
-    );
-
 }
-
 
 // ==============================
 // SHOW LESSON
