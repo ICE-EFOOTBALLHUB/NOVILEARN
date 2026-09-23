@@ -50,3 +50,24 @@ h2 {
 .level-card:hover {
     border-color: #087f5b;
 }
+
+.lesson-section {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.lesson-section h3 {
+    margin-bottom: 10px;
+}
+
+.lesson-section p {
+    line-height: 1.6;
+}
+
+.lesson-section strong {
+    display: block;
+    margin-top: 10px;
+}
