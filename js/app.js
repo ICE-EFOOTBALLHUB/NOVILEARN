@@ -1,84 +1,157 @@
-const curriculum = await fetch("./data/curriculum.json")
-    .then(response => response.json());
+// ==============================
+// LOAD CORE DATA
+// ==============================
 
-const subjects = await fetch("./data/subjects.json")
-    .then(response => response.json());
+const curriculum =
+    await fetch("../data/curriculum.json")
+        .then(response => response.json());
 
-const lessons = await fetch("./data/lessons.json")
-    .then(response => response.json());
-
-
-const levelsContainer = document.getElementById("levels");
-
-const nigeria = curriculum.nigeria;
+const subjects =
+    await fetch("../data/subjects.json")
+        .then(response => response.json());
 
 
 // ==============================
-// SHOW EDUCATION LEVELS
+// GET MAIN ELEMENTS
 // ==============================
 
-Object.entries(nigeria.levels).forEach(([levelId, level]) => {
+const levelsContainer =
+    document.getElementById("levels");
 
-    const card = document.createElement("div");
+const progressPage =
+    document.getElementById("progress-page");
 
-    card.className = "level-card";
 
-    card.innerHTML = `
-        <h3>${level.name}</h3>
-        <p>Select this level to continue</p>
-    `;
+// ==============================
+// CURRENT NAVIGATION
+// ==============================
 
-    card.addEventListener("click", () => {
-        showClasses(levelId, level);
-    });
+let currentLevelId = null;
+let currentClassId = null;
+let currentSubjectId = null;
+let currentTopicId = null;
 
-    levelsContainer.appendChild(card);
-});
+
+// ==============================
+// SHOW LEVELS
+// ==============================
+
+function showLevels() {
+
+    levelsContainer.innerHTML = "";
+
+    document.getElementById("progress-page").innerHTML = "";
+
+    const nigeria =
+        curriculum.nigeria;
+
+    Object.entries(
+        nigeria.levels
+    ).forEach(
+        ([levelId, level]) => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "level-card";
+
+            card.innerHTML = `
+                <h3>
+                    ${level.name}
+                </h3>
+            `;
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    currentLevelId =
+                        levelId;
+
+                    showClasses(
+                        levelId
+                    );
+
+                }
+            );
+
+            levelsContainer.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
 
 
 // ==============================
 // SHOW CLASSES
 // ==============================
 
-function showClasses(levelId, level) {
+function showClasses(levelId) {
 
     levelsContainer.innerHTML = "";
 
-    const backButton = document.createElement("button");
+    const level =
+        curriculum.nigeria
+            .levels[levelId];
 
-    backButton.textContent = "← Back";
+    const backButton =
+        document.createElement("button");
 
-    backButton.addEventListener("click", () => {
-        location.reload();
-    });
+    backButton.textContent =
+        "← Back";
 
-    levelsContainer.appendChild(backButton);
+    backButton.addEventListener(
+        "click",
+        showLevels
+    );
 
+    levelsContainer.appendChild(
+        backButton
+    );
 
-    const title = document.createElement("h2");
+    Object.entries(
+        level.classes
+    ).forEach(
+        ([classId, classData]) => {
 
-    title.textContent = level.name;
+            const card =
+                document.createElement("div");
 
-    levelsContainer.appendChild(title);
+            card.className =
+                "level-card";
 
+            card.innerHTML = `
+                <h3>
+                    ${classData.name}
+                </h3>
+            `;
 
-    Object.entries(level.classes).forEach(([classId, schoolClass]) => {
+            card.addEventListener(
+                "click",
+                () => {
 
-        const card = document.createElement("div");
+                    currentClassId =
+                        classId;
 
-        card.className = "level-card";
+                    showSubjects(
+                        levelId,
+                        classId
+                    );
 
-        card.innerHTML = `
-            <h3>${schoolClass.name}</h3>
-            <p>Select this class to continue</p>
-        `;
+                }
+            );
 
-        card.addEventListener("click", () => {
-            showSubjects(levelId, classId, schoolClass);
-        });
+            levelsContainer.appendChild(
+                card
+            );
 
-        levelsContainer.appendChild(card);
-    });
+        }
+    );
+
 }
 
 
@@ -86,60 +159,75 @@ function showClasses(levelId, level) {
 // SHOW SUBJECTS
 // ==============================
 
-function showSubjects(levelId, classId, schoolClass) {
+function showSubjects(
+    levelId,
+    classId
+) {
 
     levelsContainer.innerHTML = "";
 
-    const backButton = document.createElement("button");
+    const backButton =
+        document.createElement("button");
 
-    backButton.textContent = "← Back";
+    backButton.textContent =
+        "← Back";
 
-    backButton.addEventListener("click", () => {
-        showClasses(levelId, nigeria.levels[levelId]);
-    });
+    backButton.addEventListener(
+        "click",
+        () => {
 
-    levelsContainer.appendChild(backButton);
+            showClasses(
+                levelId
+            );
 
+        }
+    );
 
-    const title = document.createElement("h2");
+    levelsContainer.appendChild(
+        backButton
+    );
 
-    title.textContent = schoolClass.name;
+    const subjectList =
+        subjects[levelId];
 
-    levelsContainer.appendChild(title);
+    subjectList.forEach(
+        subject => {
 
+            const card =
+                document.createElement("div");
 
-    const levelSubjects = subjects[levelId];
+            card.className =
+                "level-card";
 
+            card.innerHTML = `
+                <h3>
+                    ${subject.name}
+                </h3>
+            `;
 
-    if (!levelSubjects) {
+            card.addEventListener(
+                "click",
+                () => {
 
-        const message = document.createElement("p");
+                    currentSubjectId =
+                        subject.id;
 
-        message.textContent = "No subjects found for this level.";
+                    showTopics(
+                        levelId,
+                        classId,
+                        subject.id
+                    );
 
-        levelsContainer.appendChild(message);
+                }
+            );
 
-        return;
-    }
+            levelsContainer.appendChild(
+                card
+            );
 
+        }
+    );
 
-    levelSubjects.forEach(subject => {
-
-        const card = document.createElement("div");
-
-        card.className = "level-card";
-
-        card.innerHTML = `
-            <h3>${subject.name}</h3>
-            <p>View lessons</p>
-        `;
-
-        card.addEventListener("click", () => {
-            showTopics(levelId, classId, subject.id);
-        });
-
-        levelsContainer.appendChild(card);
-    });
 }
 
 
@@ -147,65 +235,132 @@ function showSubjects(levelId, classId, schoolClass) {
 // SHOW TOPICS
 // ==============================
 
-function showTopics(levelId, classId, subjectId) {
+async function showTopics(
+    levelId,
+    classId,
+    subjectId
+) {
 
     levelsContainer.innerHTML = "";
 
-    const backButton = document.createElement("button");
+    const backButton =
+        document.createElement("button");
 
-    backButton.textContent = "← Back";
+    backButton.textContent =
+        "← Back";
 
-    backButton.addEventListener("click", () => {
+    backButton.addEventListener(
+        "click",
+        () => {
 
-        const schoolClass =
-            nigeria.levels[levelId].classes[classId];
+            showSubjects(
+                levelId,
+                classId
+            );
 
-        showSubjects(levelId, classId, schoolClass);
-    });
+        }
+    );
 
-    levelsContainer.appendChild(backButton);
+    levelsContainer.appendChild(
+        backButton
+    );
 
+    const loading =
+        document.createElement("p");
 
-    const title = document.createElement("h2");
+    loading.textContent =
+        "Loading topics...";
 
-    title.textContent = "Topics";
+    levelsContainer.appendChild(
+        loading
+    );
 
-    levelsContainer.appendChild(title);
+    try {
 
+        const lessonUrl =
+            `../data/lessons/${classId}/${subjectId}.json`;
 
-    const subjectLessons =
-        lessons.nigeria?.[levelId]?.[classId]?.[subjectId];
+        const response =
+            await fetch(
+                lessonUrl
+            );
 
+        if (!response.ok) {
 
-    if (!subjectLessons) {
+            throw new Error(
+                "Lesson file not found."
+            );
 
-        const message = document.createElement("p");
+        }
 
-        message.textContent = "No lessons available yet.";
+        const lessonData =
+            await response.json();
 
-        levelsContainer.appendChild(message);
+        levelsContainer.innerHTML = "";
 
-        return;
-    }
+        levelsContainer.appendChild(
+            backButton
+        );
 
+        Object.entries(
+            lessonData
+        ).forEach(
+            ([topicId, topic]) => {
 
-    Object.entries(subjectLessons).forEach(([topicId, topic]) => {
+                const card =
+                    document.createElement("div");
 
-        const card = document.createElement("div");
+                card.className =
+                    "level-card";
 
-        card.className = "level-card";
+                card.innerHTML = `
+                    <h3>
+                        ${topic.title}
+                    </h3>
 
-        card.innerHTML = `
-            <h3>${topic.title}</h3>
-            <p>${topic.description}</p>
+                    <p>
+                        ${topic.description}
+                    </p>
+                `;
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        currentTopicId =
+                            topicId;
+
+                        showLesson(
+                            levelId,
+                            classId,
+                            subjectId,
+                            topicId
+                        );
+
+                    }
+                );
+
+                levelsContainer.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = `
+            <p>
+                Unable to load topics.
+            </p>
         `;
 
-        card.addEventListener("click", () => {
-            showLesson(levelId, classId, subjectId, topicId);
-        });
+        console.error(
+            error
+        );
 
-        levelsContainer.appendChild(card);
-    });
+    }
+
 }
 
 
@@ -213,100 +368,192 @@ function showTopics(levelId, classId, subjectId) {
 // SHOW LESSON
 // ==============================
 
-function showLesson(levelId, classId, subjectId, topicId) {
-
-    const lesson =
-        lessons.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
-
-
-    if (!lesson) {
-
-        levelsContainer.innerHTML = `
-            <p>Lesson not found.</p>
-        `;
-
-        return;
-    }
-
+async function showLesson(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
 
     levelsContainer.innerHTML = "";
 
+    const backButton =
+        document.createElement("button");
 
-    const backButton = document.createElement("button");
+    backButton.textContent =
+        "← Back";
 
-    backButton.textContent = "← Back";
+    backButton.addEventListener(
+        "click",
+        () => {
 
-    backButton.addEventListener("click", () => {
-        showTopics(levelId, classId, subjectId);
-    });
+            showTopics(
+                levelId,
+                classId,
+                subjectId
+            );
 
-    levelsContainer.appendChild(backButton);
+        }
+    );
 
+    levelsContainer.appendChild(
+        backButton
+    );
 
-    const title = document.createElement("h2");
+    const loading =
+        document.createElement("p");
 
-    title.textContent = lesson.title;
+    loading.textContent =
+        "Loading lesson...";
 
-    levelsContainer.appendChild(title);
+    levelsContainer.appendChild(
+        loading
+    );
 
+    try {
 
-    const description = document.createElement("p");
+        const lessonUrl =
+            `../data/lessons/${classId}/${subjectId}/${topicId}.json`;
 
-    description.textContent = lesson.description;
+        const response =
+            await fetch(
+                lessonUrl
+            );
 
-    levelsContainer.appendChild(description);
+        if (!response.ok) {
 
-
-    lesson.content.forEach(item => {
-
-        const section = document.createElement("div");
-
-        section.className = "lesson-section";
-
-
-        if (item.type === "text") {
-
-            section.innerHTML = `
-                <h3>${item.title}</h3>
-                <p>${item.body}</p>
-            `;
+            throw new Error(
+                "Lesson file not found."
+            );
 
         }
 
+        const lesson =
+            await response.json();
 
-        if (item.type === "example") {
+        levelsContainer.innerHTML = "";
 
-            section.innerHTML = `
-                <h3>Example</h3>
-                <p>${item.question}</p>
-                <strong>Answer: ${item.answer}</strong>
-            `;
-
-        }
-
-
-        levelsContainer.appendChild(section);
-    });
-
-
-    // Practice Questions button
-
-    const practiceButton = document.createElement("button");
-
-    practiceButton.textContent = "Practice Questions";
-
-    practiceButton.addEventListener("click", () => {
-
-        startPractice(
-            levelId,
-            classId,
-            subjectId,
-            topicId
+        levelsContainer.appendChild(
+            backButton
         );
 
-    });
+        const title =
+            document.createElement("h2");
 
-    levelsContainer.appendChild(practiceButton);
+        title.textContent =
+            lesson.title;
+
+        levelsContainer.appendChild(
+            title
+        );
+
+        const description =
+            document.createElement("p");
+
+        description.textContent =
+            lesson.description;
+
+        levelsContainer.appendChild(
+            description
+        );
+
+        lesson.content.forEach(
+            section => {
+
+                const sectionElement =
+                    document.createElement(
+                        "div"
+                    );
+
+                sectionElement.className =
+                    "lesson-section";
+
+                if (
+                    section.type ===
+                    "text"
+                ) {
+
+                    sectionElement.innerHTML = `
+                        <h3>
+                            ${section.title}
+                        </h3>
+
+                        <p>
+                            ${section.body}
+                        </p>
+                    `;
+
+                }
+
+                if (
+                    section.type ===
+                    "example"
+                ) {
+
+                    sectionElement.innerHTML = `
+                        <h3>
+                            Example
+                        </h3>
+
+                        <p>
+                            ${section.question}
+                        </p>
+
+                        <strong>
+                            Answer:
+                            ${section.answer}
+                        </strong>
+                    `;
+
+                }
+
+                levelsContainer.appendChild(
+                    sectionElement
+                );
+
+            }
+        );
+
+        const practiceButton =
+            document.createElement(
+                "button"
+            );
+
+        practiceButton.textContent =
+            "Practice Questions";
+
+        practiceButton.addEventListener(
+            "click",
+            () => {
+
+                startPractice(
+                    levelId,
+                    classId,
+                    subjectId,
+                    topicId
+                );
+
+            }
+        );
+
+        levelsContainer.appendChild(
+            practiceButton
+        );
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = `
+            <p>
+                Unable to load lesson.
+            </p>
+        `;
+
+        console.error(
+            error
+        );
+
+    }
+
 }
 
 
@@ -321,270 +568,223 @@ async function startPractice(
     topicId
 ) {
 
+    levelsContainer.innerHTML = "";
+
+    const loading =
+        document.createElement("p");
+
+    loading.textContent =
+        "Loading questions...";
+
+    levelsContainer.appendChild(
+        loading
+    );
+
     try {
 
-        const response = await fetch(
-            `./data/questions/${classId}/${subjectId}/${topicId}.json`
-        );
+        const questionUrl =
+            `../data/questions/${classId}/${subjectId}/${topicId}.json`;
 
+        const response =
+            await fetch(
+                questionUrl
+            );
 
         if (!response.ok) {
 
             throw new Error(
-                "Questions could not be loaded."
+                "Question file not found."
             );
 
         }
 
-
-        const questionList =
+        const questions =
             await response.json();
 
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
 
-        if (
-            !questionList ||
-            questionList.length === 0
-        ) {
+        function showQuestion() {
 
-            levelsContainer.innerHTML = `
-                <p>No practice questions available yet.</p>
-            `;
+            levelsContainer.innerHTML = "";
 
-            return;
+            if (
+                currentQuestion >=
+                questions.length
+            ) {
+
+                showResults(
+                    levelId,
+                    classId,
+                    subjectId,
+                    topicId,
+                    score,
+                    questions.length
+                );
+
+                return;
+
+            }
+
+            const question =
+                questions[
+                    currentQuestion
+                ];
+
+            const questionNumber =
+                document.createElement(
+                    "p"
+                );
+
+            questionNumber.textContent =
+                `Question ${
+                    currentQuestion + 1
+                } of ${
+                    questions.length
+                }`;
+
+            levelsContainer.appendChild(
+                questionNumber
+            );
+
+            const questionTitle =
+                document.createElement(
+                    "h2"
+                );
+
+            questionTitle.textContent =
+                question.question;
+
+            levelsContainer.appendChild(
+                questionTitle
+            );
+
+            const optionsContainer =
+                document.createElement(
+                    "div"
+                );
+
+            question.options.forEach(
+                (option, index) => {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.textContent =
+                        option;
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            if (answered) {
+                                return;
+                            }
+
+                            answered = true;
+
+                            const buttons =
+                                optionsContainer
+                                    .querySelectorAll(
+                                        "button"
+                                    );
+
+                            buttons.forEach(
+                                btn => {
+
+                                    btn.disabled =
+                                        true;
+
+                                }
+                            );
+
+                            if (
+                                index ===
+                                question.answer
+                            ) {
+
+                                score++;
+
+                                button.textContent =
+                                    `✓ ${option}`;
+
+                            } else {
+
+                                button.textContent =
+                                    `✗ ${option}`;
+
+                                buttons[
+                                    question.answer
+                                ].textContent =
+                                    `✓ ${question.options[
+                                        question.answer
+                                    ]}`;
+
+                            }
+
+                            const nextButton =
+                                document.createElement(
+                                    "button"
+                                );
+
+                            nextButton.textContent =
+                                currentQuestion ===
+                                questions.length - 1
+                                    ? "See Results"
+                                    : "Next Question";
+
+                            nextButton.addEventListener(
+                                "click",
+                                () => {
+
+                                    currentQuestion++;
+
+                                    answered =
+                                        false;
+
+                                    showQuestion();
+
+                                }
+                            );
+
+                            levelsContainer.appendChild(
+                                nextButton
+                            );
+
+                        }
+                    );
+
+                    optionsContainer.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+            levelsContainer.appendChild(
+                optionsContainer
+            );
+
         }
 
-
-        const practiceState = {
-
-            levelId: levelId,
-
-            classId: classId,
-
-            subjectId: subjectId,
-
-            topicId: topicId,
-
-            questions: questionList,
-
-            currentQuestion: 0,
-
-            score: 0
-
-        };
-
-
-        showQuestion(practiceState);
-
+        showQuestion();
 
     } catch (error) {
 
-        console.error(error);
-
-
         levelsContainer.innerHTML = `
             <p>
-                Unable to load practice questions.
-                Please try again.
+                Unable to load questions.
             </p>
         `;
 
-    }
-
-}
-
-
-// ==============================
-// SHOW CURRENT QUESTION
-// ==============================
-
-function showQuestion(practiceState) {
-
-    const question =
-        practiceState.questions[
-            practiceState.currentQuestion
-        ];
-
-
-    levelsContainer.innerHTML = "";
-
-
-    // Back button
-
-    const backButton = document.createElement("button");
-
-    backButton.textContent = "← Back";
-
-    backButton.addEventListener("click", () => {
-
-        showLesson(
-            practiceState.levelId,
-            practiceState.classId,
-            practiceState.subjectId,
-            practiceState.topicId
+        console.error(
+            error
         );
 
-    });
-
-    levelsContainer.appendChild(backButton);
-
-
-    // Progress
-
-    const progress = document.createElement("p");
-
-    progress.textContent =
-        `Question ${
-            practiceState.currentQuestion + 1
-        } of ${
-            practiceState.questions.length
-        }`;
-
-    levelsContainer.appendChild(progress);
-
-
-    // Question
-
-    const questionTitle = document.createElement("h2");
-
-    questionTitle.textContent = question.question;
-
-    levelsContainer.appendChild(questionTitle);
-
-
-    // Options
-
-    const optionsContainer = document.createElement("div");
-
-    levelsContainer.appendChild(optionsContainer);
-
-
-    let answered = false;
-
-
-    question.options.forEach((option, optionIndex) => {
-
-        const optionButton =
-            document.createElement("button");
-
-        optionButton.textContent = option;
-
-        optionsContainer.appendChild(optionButton);
-
-
-        optionButton.addEventListener("click", () => {
-
-            if (answered) {
-                return;
-            }
-
-
-            answered = true;
-
-
-            // Disable all options
-
-            const allOptions =
-                optionsContainer.querySelectorAll("button");
-
-            allOptions.forEach(button => {
-                button.disabled = true;
-            });
-
-
-            // Check answer
-
-            if (optionIndex === question.answer) {
-
-                practiceState.score++;
-
-
-                optionButton.textContent =
-                    "✓ " + option;
-
-
-                const resultMessage =
-                    document.createElement("p");
-
-                resultMessage.textContent =
-                    "Correct! 🎉";
-
-                optionsContainer.appendChild(
-                    resultMessage
-                );
-
-            } else {
-
-                optionButton.textContent =
-                    "✗ " + option;
-
-
-                const correctOption =
-                    question.options[
-                        question.answer
-                    ];
-
-
-                const resultMessage =
-                    document.createElement("p");
-
-                resultMessage.textContent =
-                    `Correct answer: ${correctOption}`;
-
-                optionsContainer.appendChild(
-                    resultMessage
-                );
-
-            }
-
-
-            // Next button
-
-            const nextButton =
-                document.createElement("button");
-
-
-            if (
-                practiceState.currentQuestion ===
-                practiceState.questions.length - 1
-            ) {
-
-                nextButton.textContent =
-                    "Finish Practice";
-
-            } else {
-
-                nextButton.textContent =
-                    "Next Question →";
-
-            }
-
-
-            nextButton.addEventListener("click", () => {
-
-                practiceState.currentQuestion++;
-
-
-                if (
-                    practiceState.currentQuestion >=
-                    practiceState.questions.length
-                ) {
-
-                    showResults(practiceState);
-
-                    return;
-                }
-
-
-                showQuestion(practiceState);
-
-            });
-
-
-            levelsContainer.appendChild(nextButton);
-
-        });
-
-    });
+    }
 
 }
 
@@ -593,113 +793,80 @@ function showQuestion(practiceState) {
 // SAVE PROGRESS
 // ==============================
 
-function saveProgress(practiceState) {
+function saveProgress(
+    levelId,
+    classId,
+    subjectId,
+    topicId,
+    score,
+    totalQuestions
+) {
 
-    const progressKey =
+    const storageKey =
         "novilearn_progress";
 
-
-    const savedProgress =
+    const existing =
         JSON.parse(
-            localStorage.getItem(progressKey)
+            localStorage.getItem(
+                storageKey
+            )
         ) || {};
 
-
     const topicKey =
-        `${practiceState.levelId}_${practiceState.classId}_${practiceState.subjectId}_${practiceState.topicId}`;
+        `${levelId}_${classId}_${subjectId}_${topicId}`;
 
-
-    const totalQuestions =
-        practiceState.questions.length;
-
-
-    const score =
-        practiceState.score;
-
-
-    const percentage =
+    const accuracy =
         Math.round(
-            (score / totalQuestions) * 100
+            (score / totalQuestions) *
+            100
         );
 
+    if (!existing[topicKey]) {
 
-    const existing =
-        savedProgress[topicKey];
-
-
-    if (!existing) {
-
-        savedProgress[topicKey] = {
-
-            levelId:
-                practiceState.levelId,
-
-            classId:
-                practiceState.classId,
-
-            subjectId:
-                practiceState.subjectId,
-
-            topicId:
-                practiceState.topicId,
-
-            attempts: 1,
-
-            lastScore:
-                score,
-
-            bestScore:
-                score,
-
-            totalQuestions:
-                totalQuestions,
-
-            lastAccuracy:
-                percentage,
-
-            bestAccuracy:
-                percentage
-
+        existing[topicKey] = {
+            levelId,
+            classId,
+            subjectId,
+            topicId,
+            attempts: 0,
+            lastScore: 0,
+            bestScore: 0,
+            totalQuestions,
+            lastAccuracy: 0,
+            bestAccuracy: 0
         };
-
-    } else {
-
-        existing.attempts++;
-
-        existing.lastScore =
-            score;
-
-        existing.lastAccuracy =
-            percentage;
-
-
-        if (
-            score >
-            existing.bestScore
-        ) {
-
-            existing.bestScore =
-                score;
-
-        }
-
-
-        if (
-            percentage >
-            existing.bestAccuracy
-        ) {
-
-            existing.bestAccuracy =
-                percentage;
-
-        }
 
     }
 
+    const progress =
+        existing[topicKey];
+
+    progress.attempts++;
+
+    progress.lastScore =
+        score;
+
+    progress.lastAccuracy =
+        accuracy;
+
+    progress.bestScore =
+        Math.max(
+            progress.bestScore,
+            score
+        );
+
+    progress.bestAccuracy =
+        Math.max(
+            progress.bestAccuracy,
+            accuracy
+        );
+
+    progress.totalQuestions =
+        totalQuestions;
 
     localStorage.setItem(
-        progressKey,
-        JSON.stringify(savedProgress)
+        storageKey,
+        JSON.stringify(existing)
     );
 
 }
@@ -709,169 +876,109 @@ function saveProgress(practiceState) {
 // SHOW RESULTS
 // ==============================
 
-function showResults(practiceState) {
+function showResults(
+    levelId,
+    classId,
+    subjectId,
+    topicId,
+    score,
+    totalQuestions
+) {
 
-    // Save completed practice
-
-    saveProgress(practiceState);
-
+    saveProgress(
+        levelId,
+        classId,
+        subjectId,
+        topicId,
+        score,
+        totalQuestions
+    );
 
     levelsContainer.innerHTML = "";
 
-
-    const totalQuestions =
-        practiceState.questions.length;
-
-
-    const score =
-        practiceState.score;
-
-
-    const percentage =
+    const accuracy =
         Math.round(
-            (score / totalQuestions) * 100
+            (score / totalQuestions) *
+            100
         );
 
+    const result =
+        document.createElement("div");
 
-    // Title
+    result.innerHTML = `
+        <h2>
+            Practice Complete!
+        </h2>
 
-    const title =
-        document.createElement("h2");
+        <p>
+            Score:
+            <strong>
+                ${score}/${totalQuestions}
+            </strong>
+        </p>
 
-    title.textContent =
-        "Practice Complete 🎉";
-
-    levelsContainer.appendChild(title);
-
-
-    // Score
-
-    const scoreText =
-        document.createElement("p");
-
-    scoreText.textContent =
-        `Score: ${score} / ${totalQuestions}`;
-
-    levelsContainer.appendChild(scoreText);
-
-
-    // Accuracy
-
-    const accuracyText =
-        document.createElement("p");
-
-    accuracyText.textContent =
-        `Accuracy: ${percentage}%`;
+        <p>
+            Accuracy:
+            <strong>
+                ${accuracy}%
+            </strong>
+        </p>
+    `;
 
     levelsContainer.appendChild(
-        accuracyText
+        result
     );
-
-
-    // Performance message
-
-    const performance =
-        document.createElement("p");
-
-
-    if (percentage === 100) {
-
-        performance.textContent =
-            "Perfect score! Excellent work! 🌟";
-
-    } else if (percentage >= 70) {
-
-        performance.textContent =
-            "Great work! Keep it up! 👏";
-
-    } else if (percentage >= 50) {
-
-        performance.textContent =
-            "Good attempt! A little more practice will help.";
-
-    } else {
-
-        performance.textContent =
-            "Keep practicing. You’ll get there! 💪";
-
-    }
-
-
-    levelsContainer.appendChild(
-        performance
-    );
-
-
-    // Try Again
 
     const retryButton =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
     retryButton.textContent =
         "Try Again";
 
+    retryButton.addEventListener(
+        "click",
+        () => {
 
-    retryButton.addEventListener("click", () => {
+            startPractice(
+                levelId,
+                classId,
+                subjectId,
+                topicId
+            );
 
-        startPractice(
-            practiceState.levelId,
-            practiceState.classId,
-            practiceState.subjectId,
-            practiceState.topicId
-        );
-
-    });
-
+        }
+    );
 
     levelsContainer.appendChild(
         retryButton
     );
 
-
-    // Back to Lesson
-
-    const lessonButton =
-        document.createElement("button");
-
-    lessonButton.textContent =
-        "Back to Lesson";
-
-
-    lessonButton.addEventListener("click", () => {
-
-        showLesson(
-            practiceState.levelId,
-            practiceState.classId,
-            practiceState.subjectId,
-            practiceState.topicId
+    const backButton =
+        document.createElement(
+            "button"
         );
 
-    });
+    backButton.textContent =
+        "Back to Lesson";
 
+    backButton.addEventListener(
+        "click",
+        () => {
 
-    levelsContainer.appendChild(
-        lessonButton
+            showLesson(
+                levelId,
+                classId,
+                subjectId,
+                topicId
+            );
+
+        }
     );
 
-
-    // Back to Home
-
-    const homeButton =
-        document.createElement("button");
-
-    homeButton.textContent =
-        "Back to Home";
-
-
-    homeButton.addEventListener("click", () => {
-
-        location.reload();
-
-    });
-
-
     levelsContainer.appendChild(
-        homeButton
+        backButton
     );
 
 }
@@ -885,33 +992,19 @@ function showProgress() {
 
     levelsContainer.innerHTML = "";
 
-
-    const progressPage =
-        document.getElementById("progress-page");
-
     progressPage.innerHTML = "";
 
+    const progress =
+        JSON.parse(
+            localStorage.getItem(
+                "novilearn_progress"
+            )
+        ) || {};
 
-    const backButton =
-        document.createElement("button");
-
-    backButton.textContent =
-        "← Back";
-
-
-    backButton.addEventListener("click", () => {
-
-        progressPage.innerHTML = "";
-
-        location.reload();
-
-    });
-
-
-    progressPage.appendChild(
-        backButton
-    );
-
+    const entries =
+        Object.values(
+            progress
+        );
 
     const title =
         document.createElement("h2");
@@ -919,287 +1012,14 @@ function showProgress() {
     title.textContent =
         "My Progress";
 
-
     progressPage.appendChild(
         title
     );
 
+    if (
+        entries.length === 0
+    ) {
 
-    const savedProgress =
-        JSON.parse(
-            localStorage.getItem(
-                "novilearn_progress"
-            )
-        ) || {};
-
-
-    const progressEntries =
-        Object.values(savedProgress);
-
-
-    // No progress
-
-    if (progressEntries.length === 0) {
-
-        const message =
-            document.createElement("p");
-
-        message.textContent =
-            "You haven't completed any practice yet.";
-
-        progressPage.appendChild(
-            message
-        );
-
-        return;
-    }
-
-
-    // ==============================
-    // SUMMARY
-    // ==============================
-
-    let totalAttempts = 0;
-
-    let highestAccuracy = 0;
-
-
-    progressEntries.forEach(progress => {
-
-        totalAttempts +=
-            progress.attempts;
-
-
-        if (
-            progress.bestAccuracy >
-            highestAccuracy
-        ) {
-
-            highestAccuracy =
-                progress.bestAccuracy;
-
-        }
-
-    });
-
-
-    const summary =
-        document.createElement("div");
-
-    summary.className =
-        "lesson-section";
-
-
-    summary.innerHTML = `
-        <h3>Overview</h3>
-
-        <p>
-            Topics Practiced:
-            <strong>
-                ${progressEntries.length}
-            </strong>
-        </p>
-
-        <p>
-            Total Attempts:
-            <strong>
-                ${totalAttempts}
-            </strong>
-        </p>
-
-        <p>
-            Best Accuracy:
-            <strong>
-                ${highestAccuracy}%
-            </strong>
-        </p>
-    `;
-
-
-    progressPage.appendChild(
-        summary
-    );
-
-
-    // ==============================
-    // TOPIC PROGRESS
-    // ==============================
-
-    progressEntries.forEach(progress => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "lesson-section";
-
-
-        const subjectName =
-            getSubjectName(
-                progress.subjectId
-            );
-
-
-        const className =
-            nigeria.levels[
-                progress.levelId
-            ]?.classes[
-                progress.classId
-            ]?.name ||
-            progress.classId;
-
-
-        const topicName =
-            getTopicName(
-                progress.levelId,
-                progress.classId,
-                progress.subjectId,
-                progress.topicId
-            );
-
-
-        card.innerHTML = `
-            <h3>${topicName}</h3>
-
+        progressPage.innerHTML += `
             <p>
-                ${subjectName} • ${className}
-            </p>
-
-            <p>
-                Best Score:
-                <strong>
-                    ${progress.bestScore}
-                    /
-                    ${progress.totalQuestions}
-                </strong>
-            </p>
-
-            <p>
-                Best Accuracy:
-                <strong>
-                    ${progress.bestAccuracy}%
-                </strong>
-            </p>
-
-            <p>
-                Attempts:
-                <strong>
-                                        ${progress.attempts}
-                </strong>
-            </p>
-        `;
-
-
-        progressPage.appendChild(
-            card
-        );
-
-    });
-
-}
-
-
-// ==============================
-// GET SUBJECT NAME
-// ==============================
-
-function getSubjectName(subjectId) {
-
-    const allSubjects =
-        subjects.primary
-            .concat(
-                subjects.junior_secondary
-            )
-            .concat(
-                subjects.senior_secondary
-            );
-
-
-    const subject =
-        allSubjects.find(
-            item =>
-                item.id === subjectId
-        );
-
-
-    return subject
-        ? subject.name
-        : subjectId;
-
-}
-
-
-// ==============================
-// GET TOPIC NAME
-// ==============================
-
-function getTopicName(
-    levelId,
-    classId,
-    subjectId,
-    topicId
-) {
-
-    const topic =
-        lessons.nigeria
-            ?.[levelId]
-            ?.[classId]
-            ?.[subjectId]
-            ?.[topicId];
-
-
-    return topic
-        ? topic.title
-        : topicId;
-
-}
-
-
-// ==============================
-// PROGRESS BUTTON
-// ==============================
-
-document
-    .getElementById("progress-button")
-    .addEventListener(
-        "click",
-        () => {
-
-            showProgress();
-
-        }
-    );
-
-
-// ==============================
-// TEMPORARY PROGRESS TEST
-// ==============================
-
-const testProgressButton =
-    document.getElementById(
-        "test-progress"
-    );
-
-
-if (testProgressButton) {
-
-    testProgressButton.addEventListener(
-        "click",
-        () => {
-
-            const progress =
-                localStorage.getItem(
-                    "novilearn_progress"
-                );
-
-
-            document.getElementById(
-                "progress-output"
-            ).textContent =
-                progress ||
-                "No progress saved yet.";
-
-        }
-    );
-
-}
+                You haven't practiced any topics 
