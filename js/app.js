@@ -1128,14 +1128,6 @@ function showProgress() {
 
 }
 
-// ==============================
-// LOAD LESSON TOPIC INDEX
-// ==============================
-
-const lessons =
-    await fetch("./data/lessons.json")
-        .then(response => response.json());
-
 
 // ==============================
 // GET SUBJECT NAME
