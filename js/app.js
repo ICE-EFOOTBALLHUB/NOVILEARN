@@ -12,6 +12,8 @@ const levelsContainer = document.getElementById("levels");
 
 const nigeria = curriculum.nigeria;
 
+
+// Show education levels
 Object.entries(nigeria.levels).forEach(([levelId, level]) => {
 
     const card = document.createElement("div");
@@ -24,15 +26,57 @@ Object.entries(nigeria.levels).forEach(([levelId, level]) => {
     `;
 
     card.addEventListener("click", () => {
-    showSubjects(levelId, classId, schoolClass);
-});
+        showClasses(levelId, level);
+    });
 
     levelsContainer.appendChild(card);
 });
+
+
+// Show classes
 function showClasses(levelId, level) {
 
     levelsContainer.innerHTML = "";
 
+    const backButton = document.createElement("button");
+
+    backButton.textContent = "← Back";
+
+    backButton.addEventListener("click", () => {
+        location.reload();
+    });
+
+    levelsContainer.appendChild(backButton);
+
+
+    const title = document.createElement("h2");
+
+    title.textContent = level.name;
+
+    levelsContainer.appendChild(title);
+
+
+    Object.entries(level.classes).forEach(([classId, schoolClass]) => {
+
+        const card = document.createElement("div");
+
+        card.className = "level-card";
+
+        card.innerHTML = `
+            <h3>${schoolClass.name}</h3>
+            <p>Select this class to continue</p>
+        `;
+
+        card.addEventListener("click", () => {
+            showSubjects(levelId, classId, schoolClass);
+        });
+
+        levelsContainer.appendChild(card);
+    });
+}
+
+
+// Show subjects
 function showSubjects(levelId, classId, schoolClass) {
 
     levelsContainer.innerHTML = "";
@@ -47,11 +91,13 @@ function showSubjects(levelId, classId, schoolClass) {
 
     levelsContainer.appendChild(backButton);
 
+
     const title = document.createElement("h2");
 
     title.textContent = schoolClass.name;
 
     levelsContainer.appendChild(title);
+
 
     const levelSubjects = subjects[levelId];
 
@@ -64,36 +110,6 @@ function showSubjects(levelId, classId, schoolClass) {
         card.innerHTML = `
             <h3>${subject.name}</h3>
             <p>View lessons</p>
-        `;
-
-        levelsContainer.appendChild(card);
-    });
-}
-
-const backButton = document.createElement("button");
-
-backButton.textContent = "← Back";
-
-backButton.addEventListener("click", () => {
-    location.reload();
-});
-
-levelsContainer.appendChild(backButton);
-
-    const title = document.createElement("h2");
-    title.textContent = level.name;
-
-    levelsContainer.appendChild(title);
-
-    Object.entries(level.classes).forEach(([classId, schoolClass]) => {
-
-        const card = document.createElement("div");
-
-        card.className = "level-card";
-
-        card.innerHTML = `
-            <h3>${schoolClass.name}</h3>
-            <p>Select this class to continue</p>
         `;
 
         levelsContainer.appendChild(card);
