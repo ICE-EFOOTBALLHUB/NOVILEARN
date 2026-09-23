@@ -299,7 +299,14 @@ function showLesson(levelId, classId, subjectId, topicId) {
     practiceButton.textContent = "Practice Questions";
 
     practiceButton.addEventListener("click", () => {
-        startPractice(levelId, classId, subjectId, topicId);
+
+        startPractice(
+            levelId,
+            classId,
+            subjectId,
+            topicId
+        );
+
     });
 
     levelsContainer.appendChild(practiceButton);
@@ -310,7 +317,12 @@ function showLesson(levelId, classId, subjectId, topicId) {
 // START PRACTICE
 // ==============================
 
-function startPractice(levelId, classId, subjectId, topicId) {
+function startPractice(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
 
     const questionList =
         questions.nigeria?.[levelId]?.[classId]?.[subjectId]?.[topicId];
@@ -327,19 +339,24 @@ function startPractice(levelId, classId, subjectId, topicId) {
 
 
     const practiceState = {
+
+        levelId: levelId,
+
+        classId: classId,
+
+        subjectId: subjectId,
+
+        topicId: topicId,
+
         questions: questionList,
+
         currentQuestion: 0,
+
         score: 0
     };
 
 
-    showQuestion(
-        levelId,
-        classId,
-        subjectId,
-        topicId,
-        practiceState
-    );
+    showQuestion(practiceState);
 }
 
 
@@ -347,16 +364,12 @@ function startPractice(levelId, classId, subjectId, topicId) {
 // SHOW CURRENT QUESTION
 // ==============================
 
-function showQuestion(
-    levelId,
-    classId,
-    subjectId,
-    topicId,
-    practiceState
-) {
+function showQuestion(practiceState) {
 
     const question =
-        practiceState.questions[practiceState.currentQuestion];
+        practiceState.questions[
+            practiceState.currentQuestion
+        ];
 
 
     levelsContainer.innerHTML = "";
@@ -369,7 +382,14 @@ function showQuestion(
     backButton.textContent = "← Back";
 
     backButton.addEventListener("click", () => {
-        showLesson(levelId, classId, subjectId, topicId);
+
+        showLesson(
+            practiceState.levelId,
+            practiceState.classId,
+            practiceState.subjectId,
+            practiceState.topicId
+        );
+
     });
 
     levelsContainer.appendChild(backButton);
@@ -380,7 +400,11 @@ function showQuestion(
     const progress = document.createElement("p");
 
     progress.textContent =
-        `Question ${practiceState.currentQuestion + 1} of ${practiceState.questions.length}`;
+        `Question ${
+            practiceState.currentQuestion + 1
+        } of ${
+            practiceState.questions.length
+        }`;
 
     levelsContainer.appendChild(progress);
 
@@ -394,7 +418,7 @@ function showQuestion(
     levelsContainer.appendChild(questionTitle);
 
 
-    // Container for options
+    // Options
 
     const optionsContainer = document.createElement("div");
 
@@ -406,7 +430,8 @@ function showQuestion(
 
     question.options.forEach((option, optionIndex) => {
 
-        const optionButton = document.createElement("button");
+        const optionButton =
+            document.createElement("button");
 
         optionButton.textContent = option;
 
@@ -423,13 +448,15 @@ function showQuestion(
             answered = true;
 
 
-            // Disable every option
+            // Disable all options
 
             const allOptions =
                 optionsContainer.querySelectorAll("button");
 
             allOptions.forEach(button => {
+
                 button.disabled = true;
+
             });
 
 
@@ -439,8 +466,10 @@ function showQuestion(
 
                 practiceState.score++;
 
+
                 optionButton.textContent =
                     "✓ " + option;
+
 
                 const resultMessage =
                     document.createElement("p");
@@ -448,7 +477,9 @@ function showQuestion(
                 resultMessage.textContent =
                     "Correct! 🎉";
 
-                optionsContainer.appendChild(resultMessage);
+                optionsContainer.appendChild(
+                    resultMessage
+                );
 
             } else {
 
@@ -457,7 +488,9 @@ function showQuestion(
 
 
                 const correctOption =
-                    question.options[question.answer];
+                    question.options[
+                        question.answer
+                    ];
 
 
                 const resultMessage =
@@ -466,7 +499,10 @@ function showQuestion(
                 resultMessage.textContent =
                     `Correct answer: ${correctOption}`;
 
-                optionsContainer.appendChild(resultMessage);
+                optionsContainer.appendChild(
+                    resultMessage
+                );
+
             }
 
 
@@ -474,6 +510,7 @@ function showQuestion(
 
             const nextButton =
                 document.createElement("button");
+
 
             if (
                 practiceState.currentQuestion ===
@@ -487,6 +524,7 @@ function showQuestion(
 
                 nextButton.textContent =
                     "Next Question →";
+
             }
 
 
@@ -503,22 +541,21 @@ function showQuestion(
                     showResults(practiceState);
 
                     return;
+
                 }
 
 
-                showQuestion(
-                    levelId,
-                    classId,
-                    subjectId,
-                    topicId,
-                    practiceState
-                );
+                showQuestion(practiceState);
+
             });
 
 
             levelsContainer.appendChild(nextButton);
+
         });
+
     });
+
 }
 
 
@@ -531,60 +568,141 @@ function showResults(practiceState) {
     levelsContainer.innerHTML = "";
 
 
-    const title = document.createElement("h2");
+    const totalQuestions =
+        practiceState.questions.length;
 
-    title.textContent = "Practice Complete 🎉";
+
+    const score =
+        practiceState.score;
+
+
+    const percentage =
+        Math.round(
+            (score / totalQuestions) * 100
+        );
+
+
+    // Title
+
+    const title =
+        document.createElement("h2");
+
+    title.textContent =
+        "Practice Complete 🎉";
 
     levelsContainer.appendChild(title);
 
 
-    const score = document.createElement("p");
+    // Score
 
-    score.textContent =
-        `Score: ${practiceState.score} / ${practiceState.questions.length}`;
+    const scoreText =
+        document.createElement("p");
 
-    levelsContainer.appendChild(score);
+    scoreText.textContent =
+        `Score: ${score} / ${totalQuestions}`;
 
-
-    const percentage = Math.round(
-        (practiceState.score /
-            practiceState.questions.length) * 100
-    );
+    levelsContainer.appendChild(scoreText);
 
 
-    const accuracy = document.createElement("p");
+    // Accuracy
 
-    accuracy.textContent =
+    const accuracyText =
+        document.createElement("p");
+
+    accuracyText.textContent =
         `Accuracy: ${percentage}%`;
 
-    levelsContainer.appendChild(accuracy);
+    levelsContainer.appendChild(accuracyText);
 
 
-    // Try Again button
+    // Performance message
 
-    const retryButton = document.createElement("button");
+    const performance =
+        document.createElement("p");
 
-    retryButton.textContent = "Try Again";
+
+    if (percentage === 100) {
+
+        performance.textContent =
+            "Perfect score! Excellent work! 🌟";
+
+    } else if (percentage >= 70) {
+
+        performance.textContent =
+            "Great work! Keep it up! 👏";
+
+    } else if (percentage >= 50) {
+
+        performance.textContent =
+            "Good attempt! A little more practice will help.";
+
+    } else {
+
+        performance.textContent =
+            "Keep practicing. You’ll get there! 💪";
+
+    }
+
+
+    levelsContainer.appendChild(performance);
+
+
+    // Try Again
+
+    const retryButton =
+        document.createElement("button");
+
+    retryButton.textContent =
+        "Try Again";
+
 
     retryButton.addEventListener("click", () => {
 
         startPractice(
-            "primary",
-            "primary_1",
-            "mathematics",
-            "addition"
+            practiceState.levelId,
+            practiceState.classId,
+            practiceState.subjectId,
+            practiceState.topicId
         );
 
     });
 
+
     levelsContainer.appendChild(retryButton);
+
+
+    // Back to lesson
+
+    const lessonButton =
+        document.createElement("button");
+
+    lessonButton.textContent =
+        "Back to Lesson";
+
+
+    lessonButton.addEventListener("click", () => {
+
+        showLesson(
+            practiceState.levelId,
+            practiceState.classId,
+            practiceState.subjectId,
+            practiceState.topicId
+        );
+
+    });
+
+
+    levelsContainer.appendChild(lessonButton);
 
 
     // Back to home
 
-    const homeButton = document.createElement("button");
+    const homeButton =
+        document.createElement("button");
 
-    homeButton.textContent = "Back to Home";
+    homeButton.textContent =
+        "Back to Home";
+
 
     homeButton.addEventListener("click", () => {
 
@@ -592,5 +710,7 @@ function showResults(practiceState) {
 
     });
 
+
     levelsContainer.appendChild(homeButton);
+
 }
