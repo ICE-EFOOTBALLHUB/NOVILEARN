@@ -800,3 +800,254 @@ document.getElementById("test-progress").addEventListener("click", () => {
         progress || "No progress saved yet.";
 
 });
+// ==============================
+// SHOW PROGRESS
+// ==============================
+
+function showProgress() {
+
+    levelsContainer.innerHTML = "";
+
+    const progressPage =
+        document.getElementById("progress-page");
+
+    progressPage.innerHTML = "";
+
+
+    const backButton =
+        document.createElement("button");
+
+    backButton.textContent = "← Back";
+
+    backButton.addEventListener("click", () => {
+
+        progressPage.innerHTML = "";
+
+        location.reload();
+
+    });
+
+    progressPage.appendChild(backButton);
+
+
+    const title =
+        document.createElement("h2");
+
+    title.textContent = "My Progress";
+
+    progressPage.appendChild(title);
+
+
+    const savedProgress =
+        JSON.parse(
+            localStorage.getItem("novilearn_progress")
+        ) || {};
+
+
+    const progressEntries =
+        Object.values(savedProgress);
+
+
+    // No progress yet
+
+    if (progressEntries.length === 0) {
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            "You haven't completed any practice yet.";
+
+        progressPage.appendChild(message);
+
+        return;
+    }
+
+
+    // ==============================
+    // SUMMARY
+    // ==============================
+
+    let totalAttempts = 0;
+
+    let highestAccuracy = 0;
+
+
+    progressEntries.forEach(progress => {
+
+        totalAttempts += progress.attempts;
+
+        if (progress.bestAccuracy > highestAccuracy) {
+
+            highestAccuracy =
+                progress.bestAccuracy;
+
+        }
+
+    });
+
+
+    const summary =
+        document.createElement("div");
+
+    summary.className = "lesson-section";
+
+
+    summary.innerHTML = `
+        <h3>Overview</h3>
+
+        <p>
+            Topics Practiced:
+            <strong>${progressEntries.length}</strong>
+        </p>
+
+        <p>
+            Total Attempts:
+            <strong>${totalAttempts}</strong>
+        </p>
+
+        <p>
+            Best Accuracy:
+            <strong>${highestAccuracy}%</strong>
+        </p>
+    `;
+
+
+    progressPage.appendChild(summary);
+
+
+    // ==============================
+    // TOPIC PROGRESS
+    // ==============================
+
+    progressEntries.forEach(progress => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "lesson-section";
+
+
+        const subjectName =
+            getSubjectName(progress.subjectId);
+
+
+        const className =
+            nigeria.levels[
+                progress.levelId
+            ]?.classes[
+                progress.classId
+            ]?.name || progress.classId;
+
+
+        const topicName =
+            getTopicName(
+                progress.levelId,
+                progress.classId,
+                progress.subjectId,
+                progress.topicId
+            );
+
+
+        card.innerHTML = `
+            <h3>${topicName}</h3>
+
+            <p>
+                ${subjectName} • ${className}
+            </p>
+
+            <p>
+                Best Score:
+                <strong>
+                    ${progress.bestScore}
+                    /
+                    ${progress.totalQuestions}
+                </strong>
+            </p>
+
+            <p>
+                Best Accuracy:
+                <strong>
+                    ${progress.bestAccuracy}%
+                </strong>
+            </p>
+
+            <p>
+                Attempts:
+                <strong>
+                    ${progress.attempts}
+                </strong>
+            </p>
+        `;
+
+
+        progressPage.appendChild(card);
+
+    });
+
+}
+
+
+// ==============================
+// GET SUBJECT NAME
+// ==============================
+
+function getSubjectName(subjectId) {
+
+    const allSubjects =
+        subjects.primary
+            .concat(subjects.junior_secondary)
+            .concat(subjects.senior_secondary);
+
+
+    const subject =
+        allSubjects.find(
+            item => item.id === subjectId
+        );
+
+
+    return subject
+        ? subject.name
+        : subjectId;
+
+}
+
+
+// ==============================
+// GET TOPIC NAME
+// ==============================
+
+function getTopicName(
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    const topic =
+        lessons.nigeria
+            ?.[levelId]
+            ?.[classId]
+            ?.[subjectId]
+            ?.[topicId];
+
+
+    return topic
+        ? topic.title
+        : topicId;
+
+}
+
+
+// ==============================
+// PROGRESS BUTTON
+// ==============================
+
+document
+    .getElementById("progress-button")
+    .addEventListener("click", () => {
+
+        showProgress();
+
+    });
