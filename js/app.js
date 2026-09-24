@@ -689,6 +689,125 @@ if (
 // START PRACTICE
 // ==============================
 
+// ==============================
+// START LESSON QUIZ
+// ==============================
+
+async function startQuiz(
+    quizId,
+    levelId,
+    classId,
+    subjectId,
+    topicId
+) {
+
+    levelsContainer.innerHTML = "";
+
+    const loading =
+        document.createElement("p");
+
+    loading.textContent =
+        "Loading quiz...";
+
+    levelsContainer.appendChild(
+        loading
+    );
+
+    try {
+
+        const quizUrl =
+            `./data/questions/${classId}/${subjectId}/${topicId}.json`;
+
+        const response =
+            await fetch(
+                quizUrl
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Quiz file not found."
+            );
+
+        }
+
+        const quiz =
+            await response.json();
+
+        if (
+            quiz.quizId !== quizId
+        ) {
+
+            throw new Error(
+                "Quiz ID does not match."
+            );
+
+        }
+
+        levelsContainer.innerHTML = "";
+
+        const title =
+            document.createElement("h2");
+
+        title.textContent =
+            quiz.title;
+
+        levelsContainer.appendChild(
+            title
+        );
+
+        const info =
+            document.createElement("p");
+
+        info.textContent =
+            `${quiz.questions.length} questions`;
+
+        levelsContainer.appendChild(
+            info
+        );
+
+        quiz.questions.forEach(
+            (question, index) => {
+
+                const questionElement =
+                    document.createElement("div");
+
+                questionElement.className =
+                    "lesson-section";
+
+                questionElement.innerHTML = `
+                    <h3>
+                        Question ${index + 1}
+                    </h3>
+
+                    <p>
+                        ${question.question}
+                    </p>
+                `;
+
+                levelsContainer.appendChild(
+                    questionElement
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        levelsContainer.innerHTML = `
+            <p>
+                Unable to load quiz.
+            </p>
+        `;
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
 async function startPractice(
     levelId,
     classId,
