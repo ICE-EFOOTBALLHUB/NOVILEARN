@@ -599,6 +599,43 @@ async function showLesson(
 
         }
 
+        // ==============================
+// QUIZ
+// ==============================
+
+if (
+    block.type === "quiz"
+) {
+
+    blockElement.innerHTML = `
+        <h3>
+            ${block.title || "Quiz"}
+        </h3>
+
+        <button>
+            Start Quiz
+        </button>
+    `;
+
+    const quizButton =
+        blockElement.querySelector("button");
+
+    quizButton.addEventListener(
+        "click",
+        () => {
+
+            startQuiz(
+                block.content.quizId,
+                levelId,
+                classId,
+                subjectId,
+                topicId
+            );
+
+        }
+    );
+
+}
 
         levelsContainer.appendChild(
             blockElement
