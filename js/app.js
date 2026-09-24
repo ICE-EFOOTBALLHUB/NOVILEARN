@@ -463,63 +463,149 @@ async function showLesson(
             description
         );
 
-        lesson.content.forEach(
-            section => {
+        lesson.blocks.forEach(
+    block => {
 
-                const sectionElement =
-                    document.createElement(
-                        "div"
-                    );
+        const blockElement =
+            document.createElement("div");
 
-                sectionElement.className =
-                    "lesson-section";
+        blockElement.className =
+            "lesson-section";
 
-                if (
-                    section.type ===
-                    "text"
-                ) {
 
-                    sectionElement.innerHTML = `
-                        <h3>
-                            ${section.title}
-                        </h3>
+        // ==============================
+        // HEADING
+        // ==============================
 
+        if (
+            block.type === "heading"
+        ) {
+
+            blockElement.innerHTML = `
+                <h3>
+                    ${block.content}
+                </h3>
+            `;
+
+        }
+
+
+        // ==============================
+        // TEXT
+        // ==============================
+
+        if (
+            block.type === "text"
+        ) {
+
+            blockElement.innerHTML = `
+                <p>
+                    ${block.content}
+                </p>
+            `;
+
+        }
+
+
+        // ==============================
+        // EXAMPLE
+        // ==============================
+
+        if (
+            block.type === "example"
+        ) {
+
+            blockElement.innerHTML = `
+                <h3>
+                    ${block.title || "Example"}
+                </h3>
+
+                <p>
+                    ${block.content}
+                </p>
+            `;
+
+        }
+
+
+        // ==============================
+        // WORKED EXAMPLE
+        // ==============================
+
+        if (
+            block.type === "workedExample"
+        ) {
+
+            let stepsHTML = "";
+
+            block.content.steps.forEach(
+                step => {
+
+                    stepsHTML += `
                         <p>
-                            ${section.body}
+                            <strong>
+                                Step ${step.step}:
+                            </strong>
+
+                            ${step.content}
                         </p>
                     `;
 
                 }
+            );
 
-                if (
-                    section.type ===
-                    "example"
-                ) {
+            blockElement.innerHTML = `
+                <h3>
+                    ${block.title || "Worked Example"}
+                </h3>
 
-                    sectionElement.innerHTML = `
-                        <h3>
-                            Example
-                        </h3>
+                ${stepsHTML}
+            `;
 
-                        <p>
-                            ${section.question}
-                        </p>
+        }
 
-                        <strong>
-                            Answer:
-                            ${section.answer}
-                        </strong>
+
+        // ==============================
+        // SUMMARY
+        // ==============================
+
+        if (
+            block.type === "summary"
+        ) {
+
+            let summaryHTML = "";
+
+            block.content.forEach(
+                point => {
+
+                    summaryHTML += `
+                        <li>
+                            ${point}
+                        </li>
                     `;
 
                 }
+            );
 
-                levelsContainer.appendChild(
-                    sectionElement
-                );
+            blockElement.innerHTML = `
+                <h3>
+                    ${block.title || "Summary"}
+                </h3>
 
-            }
+                <ul>
+                    ${summaryHTML}
+                </ul>
+            `;
+
+        }
+
+
+        levelsContainer.appendChild(
+            blockElement
         );
 
+    }
+);
         const practiceButton =
             document.createElement(
                 "button"
