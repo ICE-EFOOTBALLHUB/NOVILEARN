@@ -576,6 +576,62 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // TABLE
+    // ==============================
+
+    if (
+        block.type === "table"
+    ) {
+
+        let tableHTML = "";
+
+        if (
+            block.content &&
+            Array.isArray(block.content.headers) &&
+            Array.isArray(block.content.rows)
+        ) {
+
+            const headersHTML =
+                block.content.headers
+                    .map(header => `<th>${header}</th>`)
+                    .join("");
+
+            const rowsHTML =
+                block.content.rows
+                    .map(row => `
+                        <tr>
+                            ${row
+                                .map(cell => `<td>${cell}</td>`)
+                                .join("")}
+                        </tr>
+                    `)
+                    .join("");
+
+            tableHTML = `
+                <table class="lesson-table">
+                    <thead>
+                        <tr>${headersHTML}</tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHTML}
+                    </tbody>
+                </table>
+            `;
+
+        }
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Table"}
+            </h3>
+
+            ${tableHTML}
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
