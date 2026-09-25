@@ -45,13 +45,20 @@
     },
     {
       "id": "block-003",
+      "type": "keyPoint",
+      "requiredToContinue": false,
+      "title": "Remember",
+      "content": "Addition combines two or more quantities to make a total."
+    },
+    {
+      "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
       "title": "Example",
       "content": "If you have 2 apples and get 3 more, you have 5 apples altogether."
     },
     {
-      "id": "block-004",
+      "id": "block-005",
       "type": "workedExample",
       "requiredToContinue": false,
       "title": "Let's solve it",
@@ -73,7 +80,7 @@
       }
     },
     {
-      "id": "block-005",
+      "id": "block-006",
       "type": "quiz",
       "requiredToContinue": true,
       "title": "Check Your Understanding",
@@ -82,7 +89,7 @@
       }
     },
     {
-      "id": "block-006",
+      "id": "block-007",
       "type": "summary",
       "requiredToContinue": false,
       "title": "What we learned",
