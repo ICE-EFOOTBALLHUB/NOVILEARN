@@ -555,6 +555,27 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // FORMULA
+    // ==============================
+
+    if (
+        block.type === "formula"
+    ) {
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Formula"}
+            </h3>
+
+            <p class="lesson-formula">
+                ${block.content}
+            </p>
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
