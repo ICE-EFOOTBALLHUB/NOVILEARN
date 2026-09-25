@@ -37,6 +37,7 @@ let currentTopicId = null;
 
 let currentLesson = null;
 let currentBlockIndex = 0;
+let completedBlocks = {};
 
 // ==============================
 // SHOW LEVELS
