@@ -1298,11 +1298,8 @@ async function startPractice(
 
         }
 
-        const quiz =
-            await response.json();
-
         const questions =
-            quiz.questions;
+            await response.json();
 
         let currentQuestion = 0;
         let score = 0;
