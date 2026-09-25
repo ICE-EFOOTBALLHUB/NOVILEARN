@@ -1065,53 +1065,191 @@ async function startQuiz(
 
         }
 
-        levelsContainer.innerHTML = "";
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
 
-        const title =
-            document.createElement("h2");
 
-        title.textContent =
-            quiz.title;
+        function showQuestion() {
 
-        levelsContainer.appendChild(
-            title
-        );
+            levelsContainer.innerHTML = "";
 
-        const info =
-            document.createElement("p");
 
-        info.textContent =
-            `${quiz.questions.length} questions`;
+            // ==============================
+            // QUIZ COMPLETE
+            // ==============================
 
-        levelsContainer.appendChild(
-            info
-        );
+            if (
+                currentQuestion >=
+                quiz.questions.length
+            ) {
 
-        quiz.questions.forEach(
-            (question, index) => {
+                completedBlocks[
+                    currentLesson.blocks[
+                        currentBlockIndex
+                    ].id
+                ] = true;
 
-                const questionElement =
-                    document.createElement("div");
+                renderCurrentLessonBlock();
 
-                questionElement.className =
-                    "lesson-section";
-
-                questionElement.innerHTML = `
-                    <h3>
-                        Question ${index + 1}
-                    </h3>
-
-                    <p>
-                        ${question.question}
-                    </p>
-                `;
-
-                levelsContainer.appendChild(
-                    questionElement
-                );
+                return;
 
             }
-        );
+
+
+            const question =
+                quiz.questions[
+                    currentQuestion
+                ];
+
+
+            const questionNumber =
+                document.createElement("p");
+
+            questionNumber.textContent =
+                `Question ${
+                    currentQuestion + 1
+                } of ${
+                    quiz.questions.length
+                }`;
+
+            levelsContainer.appendChild(
+                questionNumber
+            );
+
+
+            const questionTitle =
+                document.createElement("h2");
+
+            questionTitle.textContent =
+                question.question;
+
+            levelsContainer.appendChild(
+                questionTitle
+            );
+
+
+            const optionsContainer =
+                document.createElement("div");
+
+
+            question.options.forEach(
+                (option, index) => {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.textContent =
+                        option;
+
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            if (answered) {
+                                return;
+                            }
+
+                            answered = true;
+
+
+                            const buttons =
+                                optionsContainer
+                                    .querySelectorAll(
+                                        "button"
+                                    );
+
+
+                            buttons.forEach(
+                                btn => {
+
+                                    btn.disabled =
+                                        true;
+
+                                }
+                            );
+
+
+                            if (
+                                index ===
+                                question.answer
+                            ) {
+
+                                score++;
+
+                                button.textContent =
+                                    `✓ ${option}`;
+
+                            } else {
+
+                                button.textContent =
+                                    `✗ ${option}`;
+
+                                buttons[
+                                    question.answer
+                                ].textContent =
+                                    `✓ ${question.options[
+                                        question.answer
+                                    ]}`;
+
+                            }
+
+
+                            const nextButton =
+                                document.createElement(
+                                    "button"
+                                );
+
+
+                            nextButton.textContent =
+                                currentQuestion ===
+                                quiz.questions.length - 1
+                                    ? "Finish Quiz"
+                                    : "Next Question";
+
+
+                            nextButton.addEventListener(
+                                "click",
+                                () => {
+
+                                    currentQuestion++;
+
+                                    answered =
+                                        false;
+
+                                    showQuestion();
+
+                                }
+                            );
+
+
+                            levelsContainer.appendChild(
+                                nextButton
+                            );
+
+                        }
+                    );
+
+
+                    optionsContainer.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+
+            levelsContainer.appendChild(
+                optionsContainer
+            );
+
+        }
+
+
+        showQuestion();
 
     } catch (error) {
 
@@ -1127,8 +1265,7 @@ async function startQuiz(
 
     }
 
-}
-
+                 }
 async function startPractice(
     levelId,
     classId,
