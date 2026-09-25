@@ -1052,18 +1052,8 @@ async function startQuiz(
 
         }
 
-        const quiz =
+        const questions =
             await response.json();
-
-        if (
-            quiz.quizId !== quizId
-        ) {
-
-            throw new Error(
-                "Quiz ID does not match."
-            );
-
-        }
 
         let currentQuestion = 0;
         let score = 0;
@@ -1081,7 +1071,7 @@ async function startQuiz(
 
             if (
                 currentQuestion >=
-                quiz.questions.length
+                questions.length
             ) {
 
                 completedBlocks[
@@ -1098,7 +1088,7 @@ async function startQuiz(
 
 
             const question =
-                quiz.questions[
+                questions[
                     currentQuestion
                 ];
 
@@ -1110,7 +1100,7 @@ async function startQuiz(
                 `Question ${
                     currentQuestion + 1
                 } of ${
-                    quiz.questions.length
+                    questions.length
                 }`;
 
             levelsContainer.appendChild(
@@ -1191,9 +1181,11 @@ async function startQuiz(
                                 buttons[
                                     question.answer
                                 ].textContent =
-                                    `✓ ${question.options[
-                                        question.answer
-                                    ]}`;
+                                    `✓ ${
+                                        question.options[
+                                            question.answer
+                                        ]
+                                    }`;
 
                             }
 
@@ -1206,7 +1198,7 @@ async function startQuiz(
 
                             nextButton.textContent =
                                 currentQuestion ===
-                                quiz.questions.length - 1
+                                questions.length - 1
                                     ? "Finish Quiz"
                                     : "Next Question";
 
@@ -1265,7 +1257,7 @@ async function startQuiz(
 
     }
 
-                 }
+    }
 async function startPractice(
     levelId,
     classId,
