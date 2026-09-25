@@ -1052,8 +1052,11 @@ async function startQuiz(
 
         }
 
-        const questions =
+        const quiz =
             await response.json();
+
+        const questions =
+            quiz.questions;
 
         let currentQuestion = 0;
         let score = 0;
@@ -1295,8 +1298,11 @@ async function startPractice(
 
         }
 
-        const questions =
+        const quiz =
             await response.json();
+
+        const questions =
+            quiz.questions;
 
         let currentQuestion = 0;
         let score = 0;
