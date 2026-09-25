@@ -769,7 +769,56 @@ if (
 
             renderCurrentLessonBlock();
 
+            return;
+
         }
+
+
+        // ==============================
+        // COMPLETE LESSON
+        // ==============================
+
+        levelsContainer.innerHTML = "";
+
+        const completion =
+            document.createElement("div");
+
+        completion.classList.add(
+            "lesson-complete"
+        );
+
+        completion.innerHTML = `
+            <h2>🎉 Lesson Complete!</h2>
+            <p>
+                You completed
+                <strong>${currentLesson.title}</strong>.
+            </p>
+            <button id="back-to-topic">
+                Back to Topic
+            </button>
+        `;
+
+        levelsContainer.appendChild(
+            completion
+        );
+
+        const backToTopicButton =
+            completion.querySelector(
+                "#back-to-topic"
+            );
+
+        backToTopicButton.addEventListener(
+            "click",
+            () => {
+
+                showTopics(
+                    currentLevelId,
+                    currentClassId,
+                    currentSubjectId
+                );
+
+            }
+        );
 
     }
 );
