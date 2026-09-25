@@ -718,6 +718,16 @@ if (
         currentBlockIndex === 0;
 
 
+    const isLastBlock =
+        currentBlockIndex ===
+        currentLesson.blocks.length - 1;
+
+    if (isLastBlock) {
+        nextButton.textContent =
+            "Finish Lesson";
+    }
+
+
     nextButton.addEventListener(
     "click",
     () => {
