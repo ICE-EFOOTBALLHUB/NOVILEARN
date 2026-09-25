@@ -667,7 +667,12 @@ if (
     levelsContainer.appendChild(
         blockElement
     );
+    
+// ==============================
+// MARK BLOCK AS COMPLETED
+// ==============================
 
+completedBlocks[block.id] = true;
 
     // ==============================
     // NAVIGATION
