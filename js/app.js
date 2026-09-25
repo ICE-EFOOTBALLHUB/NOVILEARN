@@ -587,6 +587,45 @@ function renderCurrentLessonBlock() {
 
     }
 
+    // ==============================
+// QUIZ
+// ==============================
+
+if (
+    block.type === "quiz"
+) {
+
+    blockElement.innerHTML = `
+        <h3>
+            ${block.title || "Quiz"}
+        </h3>
+
+        <button id="lesson-quiz-start">
+            Start Quiz
+        </button>
+    `;
+
+    const quizButton =
+        document.getElementById(
+            "lesson-quiz-start"
+        );
+
+    quizButton.addEventListener(
+        "click",
+        () => {
+
+            startQuiz(
+                block.content.quizId,
+                currentLevelId,
+                currentClassId,
+                currentSubjectId,
+                currentTopicId
+            );
+
+        }
+    );
+
+}
 
     // ==============================
     // SUMMARY
