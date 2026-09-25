@@ -608,10 +608,10 @@ if (
     `;
 
     const quizButton =
-        document.getElementById(
-            "lesson-quiz-start"
-        );
-
+    blockElement.querySelector(
+        "#lesson-quiz-start"
+    );
+    
     quizButton.addEventListener(
         "click",
         () => {
