@@ -159,6 +159,16 @@
       }
     },
     {
+      "id": "block-animation-001",
+      "type": "animation",
+      "requiredToContinue": false,
+      "title": "Addition in Motion",
+      "content": {
+        "description": "Watch the marker start at 2 and make three forward jumps to 5. Use Play, Pause, or Restart to control the explanation.",
+        "alt": "An animated number line showing three forward jumps from 2 to 5."
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
