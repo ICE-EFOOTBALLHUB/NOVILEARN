@@ -111,6 +111,17 @@
       }
     },
     {
+      "id": "block-image-001",
+      "type": "image",
+      "requiredToContinue": false,
+      "title": "Adding Apples",
+      "content": {
+        "src": "./assets/images/addition-apples.svg",
+        "alt": "Two apples plus three apples equals five apples.",
+        "caption": "2 apples + 3 apples = 5 apples altogether."
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
