@@ -31,6 +31,12 @@ let currentClassId = null;
 let currentSubjectId = null;
 let currentTopicId = null;
 
+// ==============================
+// LESSON STATE
+// ==============================
+
+let currentLesson = null;
+let currentBlockIndex = 0;
 
 // ==============================
 // SHOW LEVELS
