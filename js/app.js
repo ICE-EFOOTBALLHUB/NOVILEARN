@@ -669,10 +669,16 @@ if (
     );
     
 // ==============================
-// MARK BLOCK AS COMPLETED
+// MARK NON-REQUIRED BLOCK AS COMPLETED
 // ==============================
 
-completedBlocks[block.id] = true;
+if (
+    block.requiredToContinue !== true
+) {
+
+    completedBlocks[block.id] = true;
+
+}
 
     // ==============================
     // NAVIGATION
@@ -783,212 +789,6 @@ completedBlocks[block.id] = true;
 renderCurrentLessonBlock();
 
 return;
-        
-        lesson.blocks.forEach(
-    block => {
-
-        const blockElement =
-            document.createElement("div");
-
-        blockElement.className =
-            "lesson-section";
-
-
-        // ==============================
-        // HEADING
-        // ==============================
-
-        if (
-            block.type === "heading"
-        ) {
-
-            blockElement.innerHTML = `
-                <h3>
-                    ${block.content}
-                </h3>
-            `;
-
-        }
-
-
-        // ==============================
-        // TEXT
-        // ==============================
-
-        if (
-            block.type === "text"
-        ) {
-
-            blockElement.innerHTML = `
-                <p>
-                    ${block.content}
-                </p>
-            `;
-
-        }
-
-
-        // ==============================
-        // EXAMPLE
-        // ==============================
-
-        if (
-            block.type === "example"
-        ) {
-
-            blockElement.innerHTML = `
-                <h3>
-                    ${block.title || "Example"}
-                </h3>
-
-                <p>
-                    ${block.content}
-                </p>
-            `;
-
-        }
-
-
-        // ==============================
-        // WORKED EXAMPLE
-        // ==============================
-
-        if (
-            block.type === "workedExample"
-        ) {
-
-            let stepsHTML = "";
-
-            block.content.steps.forEach(
-                step => {
-
-                    stepsHTML += `
-                        <p>
-                            <strong>
-                                Step ${step.step}:
-                            </strong>
-
-                            ${step.content}
-                        </p>
-                    `;
-
-                }
-            );
-
-            blockElement.innerHTML = `
-                <h3>
-                    ${block.title || "Worked Example"}
-                </h3>
-
-                ${stepsHTML}
-            `;
-
-        }
-
-
-        // ==============================
-        // SUMMARY
-        // ==============================
-
-        if (
-            block.type === "summary"
-        ) {
-
-            let summaryHTML = "";
-
-            block.content.forEach(
-                point => {
-
-                    summaryHTML += `
-                        <li>
-                            ${point}
-                        </li>
-                    `;
-
-                }
-            );
-
-            blockElement.innerHTML = `
-                <h3>
-                    ${block.title || "Summary"}
-                </h3>
-
-                <ul>
-                    ${summaryHTML}
-                </ul>
-            `;
-
-        }
-
-        // ==============================
-// QUIZ
-// ==============================
-
-if (
-    block.type === "quiz"
-) {
-
-    blockElement.innerHTML = `
-        <h3>
-            ${block.title || "Quiz"}
-        </h3>
-
-        <button>
-            Start Quiz
-        </button>
-    `;
-
-    const quizButton =
-        blockElement.querySelector("button");
-
-    quizButton.addEventListener(
-        "click",
-        () => {
-
-            startQuiz(
-                block.content.quizId,
-                levelId,
-                classId,
-                subjectId,
-                topicId
-            );
-
-        }
-    );
-
-}
-
-        levelsContainer.appendChild(
-            blockElement
-        );
-
-    }
-);
-        const practiceButton =
-            document.createElement(
-                "button"
-            );
-
-        practiceButton.textContent =
-            "Practice Questions";
-
-        practiceButton.addEventListener(
-            "click",
-            () => {
-
-                startPractice(
-                    levelId,
-                    classId,
-                    subjectId,
-                    topicId
-                );
-
-            }
-        );
-
-        levelsContainer.appendChild(
-            practiceButton
-        );
 
     } catch (error) {
 
@@ -1054,6 +854,28 @@ async function startQuiz(
 
         const quiz =
             await response.json();
+
+        if (
+            quiz.quizId !== quizId
+        ) {
+
+            throw new Error(
+                "Quiz ID does not match."
+            );
+
+        }
+
+        if (
+            !Array.isArray(
+                quiz.questions
+            )
+        ) {
+
+            throw new Error(
+                "Quiz questions are missing or invalid."
+            );
+
+        }
 
         const questions =
             quiz.questions;
@@ -1252,9 +1074,14 @@ async function startQuiz(
             <p>
                 Unable to load quiz.
             </p>
+
+            <p>
+                ${error.message}
+            </p>
         `;
 
         console.error(
+            "Lesson quiz error:",
             error
         );
 
