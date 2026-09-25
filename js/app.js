@@ -712,23 +712,50 @@ completedBlocks[block.id] = true;
 
 
     nextButton.addEventListener(
-        "click",
-        () => {
+    "click",
+    () => {
 
-            if (
-                currentBlockIndex <
-                currentLesson.blocks.length - 1
-            ) {
+        const block =
+            currentLesson.blocks[
+                currentBlockIndex
+            ];
 
-                currentBlockIndex++;
 
-                renderCurrentLessonBlock();
+        // ==============================
+        // CHECK REQUIRED BLOCK
+        // ==============================
 
-            }
+        if (
+            block.requiredToContinue === true &&
+            completedBlocks[block.id] !== true
+        ) {
+
+            alert(
+                "Please complete this activity before continuing."
+            );
+
+            return;
 
         }
-    );
 
+
+        // ==============================
+        // MOVE TO NEXT BLOCK
+        // ==============================
+
+        if (
+            currentBlockIndex <
+            currentLesson.blocks.length - 1
+        ) {
+
+            currentBlockIndex++;
+
+            renderCurrentLessonBlock();
+
+        }
+
+    }
+);
 
     backButton.addEventListener(
         "click",
