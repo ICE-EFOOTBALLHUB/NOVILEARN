@@ -804,6 +804,73 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // AUDIO
+    // ==============================
+
+    if (
+        block.type === "audio"
+    ) {
+
+        const audioContent =
+            block.content || {};
+
+        const descriptionHTML =
+            audioContent.description
+                ? `<p class="lesson-audio-description">${audioContent.description}</p>`
+                : "";
+
+        const transcriptHTML =
+            audioContent.transcript
+                ? `<details class="lesson-audio-transcript"><summary>Transcript</summary><p>${audioContent.transcript}</p></details>`
+                : "";
+
+        const downloadHTML =
+            audioContent.downloadable !== false && audioContent.src
+                ? `<a class="lesson-audio-download" href="${audioContent.src}" download target="_blank" rel="noopener">Download Audio</a>`
+                : "";
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Audio"}
+            </h3>
+
+            ${descriptionHTML}
+
+            <div class="lesson-audio">
+                <p class="lesson-audio-data-note">
+                    This audio will not load until you choose to play it.
+                </p>
+                <button type="button" class="lesson-audio-load">
+                    Play Audio
+                </button>
+                ${downloadHTML}
+            </div>
+
+            ${transcriptHTML}
+        `;
+
+        const audioContainer =
+            blockElement.querySelector(".lesson-audio");
+
+        const loadAudioButton =
+            blockElement.querySelector(".lesson-audio-load");
+
+        if (loadAudioButton && audioContent.src) {
+            loadAudioButton.addEventListener("click", () => {
+                audioContainer.innerHTML = `
+                    <audio class="lesson-audio-player" controls preload="metadata">
+                        <source src="${audioContent.src}" type="${audioContent.mimeType || "audio/mpeg"}">
+                        Your browser does not support HTML audio.
+                    </audio>
+                    ${downloadHTML}
+                `;
+            });
+        }
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
