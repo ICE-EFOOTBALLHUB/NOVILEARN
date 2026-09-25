@@ -871,6 +871,80 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // ANIMATION
+    // ==============================
+
+    if (
+        block.type === "animation"
+    ) {
+
+        const animationContent =
+            block.content || {};
+
+        const descriptionHTML =
+            animationContent.description
+                ? `<p class="lesson-animation-description">${animationContent.description}</p>`
+                : "";
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Animation"}
+            </h3>
+
+            ${descriptionHTML}
+
+            <div class="lesson-animation">
+                <div class="lesson-animation-stage" aria-label="${animationContent.alt || "Educational animation"}">
+                    <div class="lesson-animation-number-line">
+                        ${[0,1,2,3,4,5,6,7].map(number => `<span>${number}</span>`).join("")}
+                        <div class="lesson-animation-marker" aria-hidden="true">●</div>
+                    </div>
+                    <p class="lesson-animation-equation">2 + 3 = 5</p>
+                </div>
+
+                <div class="lesson-animation-controls">
+                    <button type="button" class="lesson-animation-play">Play</button>
+                    <button type="button" class="lesson-animation-pause">Pause</button>
+                    <button type="button" class="lesson-animation-restart">Restart</button>
+                </div>
+            </div>
+        `;
+
+        const marker =
+            blockElement.querySelector(".lesson-animation-marker");
+
+        const playButton =
+            blockElement.querySelector(".lesson-animation-play");
+
+        const pauseButton =
+            blockElement.querySelector(".lesson-animation-pause");
+
+        const restartButton =
+            blockElement.querySelector(".lesson-animation-restart");
+
+        if (marker && playButton && pauseButton && restartButton) {
+            playButton.addEventListener("click", () => {
+                marker.classList.add("is-playing");
+                marker.style.animationPlayState = "running";
+            });
+
+            pauseButton.addEventListener("click", () => {
+                marker.style.animationPlayState = "paused";
+            });
+
+            restartButton.addEventListener("click", () => {
+                marker.classList.remove("is-playing");
+                marker.style.animationPlayState = "paused";
+                void marker.offsetWidth;
+                marker.classList.add("is-playing");
+                marker.style.animationPlayState = "running";
+            });
+        }
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
