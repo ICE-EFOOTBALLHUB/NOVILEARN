@@ -534,6 +534,27 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // KEY POINT
+    // ==============================
+
+    if (
+        block.type === "keyPoint"
+    ) {
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Key Point"}
+            </h3>
+
+            <p>
+                ${block.content}
+            </p>
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
