@@ -38,6 +38,7 @@ let currentTopicId = null;
 let currentLesson = null;
 let currentBlockIndex = 0;
 let completedBlocks = {};
+let renderCurrentLessonBlock = null;
 
 // ==============================
 // SHOW LEVELS
@@ -482,7 +483,7 @@ currentBlockIndex = 0;
 // RENDER CURRENT LESSON BLOCK
 // ==============================
 
-function renderCurrentLessonBlock() {
+renderCurrentLessonBlock = function() {
 
     const block =
         currentLesson.blocks[
@@ -780,7 +781,7 @@ if (
         }
     );
 
-                }
+                };
 
 // ==============================
 // START LESSON ENGINE
