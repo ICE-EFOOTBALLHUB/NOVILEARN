@@ -71,3 +71,30 @@ h2 {
     display: block;
     margin-top: 10px;
 }
+
+/* Temporary lesson table styling for development */
+.lesson-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.lesson-table th,
+.lesson-table td {
+    border: 1px solid #bbb;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Basic comparison layout; final visual design comes later */
+.lesson-comparison {
+    display: grid;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.lesson-comparison-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+}
