@@ -632,6 +632,45 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // COMPARISON
+    // ==============================
+
+    if (
+        block.type === "comparison"
+    ) {
+
+        let comparisonHTML = "";
+
+        if (
+            block.content &&
+            Array.isArray(block.content.items)
+        ) {
+
+            comparisonHTML = block.content.items
+                .map(item => `
+                    <div class="lesson-comparison-item">
+                        <h4>${item.title || ""}</h4>
+                        <p>${item.content || ""}</p>
+                    </div>
+                `)
+                .join("");
+
+        }
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Comparison"}
+            </h3>
+
+            <div class="lesson-comparison">
+                ${comparisonHTML}
+            </div>
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
