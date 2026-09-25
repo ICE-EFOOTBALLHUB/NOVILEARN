@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260" role="img" aria-labelledby="title desc">
+<title id="title">Two apples plus three apples equals five apples</title>
+<desc id="desc">A simple addition illustration showing two apples, a plus sign, three apples, an equals sign, and five apples.</desc>
+<rect width="720" height="260" fill="white"/>
+<g fill="#d94a3a" stroke="#8b2d24" stroke-width="3">
+<circle cx="55" cy="125" r="28"/><circle cx="115" cy="125" r="28"/>
+<circle cx="245" cy="95" r="28"/><circle cx="305" cy="95" r="28"/><circle cx="275" cy="155" r="28"/>
+<circle cx="475" cy="85" r="25"/><circle cx="535" cy="85" r="25"/><circle cx="595" cy="85" r="25"/><circle cx="505" cy="150" r="25"/><circle cx="565" cy="150" r="25"/>
+</g>
+<g stroke="#5d4037" stroke-width="5"><path d="M55 96v-18"/><path d="M115 96v-18"/><path d="M245 66v-18"/><path d="M305 66v-18"/><path d="M275 126v-18"/><path d="M475 59v-16"/><path d="M535 59v-16"/><path d="M595 59v-16"/><path d="M505 124v-16"/><path d="M565 124v-16"/></g>
+<g font-family="Arial, sans-serif" font-size="48" text-anchor="middle" fill="#222"><text x="175" y="140">+</text><text x="380" y="140">=</text></g>
+<g font-family="Arial, sans-serif" font-size="22" text-anchor="middle" fill="#333"><text x="85" y="215">2 apples</text><text x="275" y="215">3 apples</text><text x="535" y="215">5 apples</text></g>
+</svg>
