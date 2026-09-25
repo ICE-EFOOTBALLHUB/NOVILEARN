@@ -939,25 +939,50 @@ renderCurrentLessonBlock = function() {
 
             const movementSegments = [];
 
-            // First show how we reach the starting value from zero.
+            // Treat reaching the starting value and applying the operation as
+            // two visibly separate mathematical phases. Every movement is one
+            // number-line unit so the marker demonstrates the count itself.
             if (startValue !== 0) {
+                const startDirection = startValue > 0 ? 1 : -1;
+                for (let step = 0; step < Math.abs(startValue); step++) {
+                    movementSegments.push({
+                        type: "move",
+                        from: step * startDirection,
+                        to: (step + 1) * startDirection,
+                        label: `${startValue >= 0 ? "+" : ""}${startValue}`,
+                        duration: 550
+                    });
+                }
+
+                // Hold on the starting value so the learner can see that the
+                // first operation has finished before the next one begins.
                 movementSegments.push({
-                    from: 0,
-                    to: startValue,
+                    type: "wait",
+                    at: startValue,
                     label: `${startValue >= 0 ? "+" : ""}${startValue}`,
-                    duration: Math.max(700, Math.abs(startValue) * 350)
+                    duration: 850
                 });
             }
 
-            // Then move one number-line unit at a time for the operation itself.
             const direction = changeValue >= 0 ? 1 : -1;
-            for (let step = 0; step < Math.abs(changeValue); step++) {
+            if (changeValue !== 0) {
+                // Briefly introduce the second operation before its jumps.
                 movementSegments.push({
-                    from: startValue + (step * direction),
-                    to: startValue + ((step + 1) * direction),
-                    label: step === 0 ? `${changeValue >= 0 ? "+" : ""}${changeValue}` : "",
-                    duration: 550
+                    type: "wait",
+                    at: startValue,
+                    label: `${changeValue >= 0 ? "+" : ""}${changeValue}`,
+                    duration: 450
                 });
+
+                for (let step = 0; step < Math.abs(changeValue); step++) {
+                    movementSegments.push({
+                        type: "move",
+                        from: startValue + (step * direction),
+                        to: startValue + ((step + 1) * direction),
+                        label: `${changeValue >= 0 ? "+" : ""}${changeValue}`,
+                        duration: 550
+                    });
+                }
             }
 
             const getTickCenter = value => {
@@ -1019,7 +1044,13 @@ renderCurrentLessonBlock = function() {
 
                 const elapsed = timestamp - lastTimestamp;
                 segmentProgress = Math.min(1, elapsed / segment.duration);
-                placeMarker(segment.from, segment.to, segmentProgress);
+
+                if (segment.type === "wait") {
+                    marker.style.left = `${getTickCenter(segment.at)}px`;
+                    marker.style.transform = "translate(-50%, 0)";
+                } else {
+                    placeMarker(segment.from, segment.to, segmentProgress);
+                }
 
                 if (segmentProgress >= 1) {
                     segmentIndex++;
