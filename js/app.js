@@ -469,6 +469,233 @@ async function showLesson(
             description
         );
 
+// ==============================
+// RENDER CURRENT LESSON BLOCK
+// ==============================
+
+function renderCurrentLessonBlock() {
+
+    const block =
+        currentLesson.blocks[
+            currentBlockIndex
+        ];
+
+    levelsContainer.innerHTML = "";
+
+    const blockElement =
+        document.createElement("div");
+
+    blockElement.className =
+        "lesson-section";
+
+
+    // ==============================
+    // HEADING
+    // ==============================
+
+    if (
+        block.type === "heading"
+    ) {
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.content}
+            </h3>
+        `;
+
+    }
+
+
+    // ==============================
+    // TEXT
+    // ==============================
+
+    if (
+        block.type === "text"
+    ) {
+
+        blockElement.innerHTML = `
+            <p>
+                ${block.content}
+            </p>
+        `;
+
+    }
+
+
+    // ==============================
+    // EXAMPLE
+    // ==============================
+
+    if (
+        block.type === "example"
+    ) {
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Example"}
+            </h3>
+
+            <p>
+                ${block.content}
+            </p>
+        `;
+
+    }
+
+
+    // ==============================
+    // WORKED EXAMPLE
+    // ==============================
+
+    if (
+        block.type === "workedExample"
+    ) {
+
+        let stepsHTML = "";
+
+        block.content.steps.forEach(
+            step => {
+
+                stepsHTML += `
+                    <p>
+                        <strong>
+                            Step ${step.step}:
+                        </strong>
+
+                        ${step.content}
+                    </p>
+                `;
+
+            }
+        );
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Worked Example"}
+            </h3>
+
+            ${stepsHTML}
+        `;
+
+    }
+
+
+    // ==============================
+    // SUMMARY
+    // ==============================
+
+    if (
+        block.type === "summary"
+    ) {
+
+        let summaryHTML = "";
+
+        block.content.forEach(
+            point => {
+
+                summaryHTML += `
+                    <li>
+                        ${point}
+                    </li>
+                `;
+
+            }
+        );
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Summary"}
+            </h3>
+
+            <ul>
+                ${summaryHTML}
+            </ul>
+        `;
+
+    }
+
+
+    levelsContainer.appendChild(
+        blockElement
+    );
+
+
+    // ==============================
+    // NAVIGATION
+    // ==============================
+
+    const navigation =
+        document.createElement("div");
+
+    navigation.innerHTML = `
+        <button id="lesson-back">
+            Back
+        </button>
+
+        <button id="lesson-next">
+            Next
+        </button>
+    `;
+
+    levelsContainer.appendChild(
+        navigation
+    );
+
+
+    const backButton =
+        document.getElementById(
+            "lesson-back"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "lesson-next"
+        );
+
+
+    backButton.disabled =
+        currentBlockIndex === 0;
+
+
+    nextButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentBlockIndex <
+                currentLesson.blocks.length - 1
+            ) {
+
+                currentBlockIndex++;
+
+                renderCurrentLessonBlock();
+
+            }
+
+        }
+    );
+
+
+    backButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentBlockIndex > 0
+            ) {
+
+                currentBlockIndex--;
+
+                renderCurrentLessonBlock();
+
+            }
+
+        }
+    );
+
+                }
+        
         lesson.blocks.forEach(
     block => {
 
