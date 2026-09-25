@@ -98,3 +98,19 @@ h2 {
     padding: 15px;
     border-radius: 8px;
 }
+
+
+/* Lesson image block - development styling */
+.lesson-image {
+    margin: 1rem 0;
+}
+
+.lesson-image img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.lesson-image figcaption {
+    margin-top: 0.5rem;
+}
