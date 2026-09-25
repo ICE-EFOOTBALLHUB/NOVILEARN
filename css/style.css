@@ -162,3 +162,34 @@ h2 {
     max-width: 720px;
     height: auto;
 }
+
+
+/* Lesson audio block - click-to-load to avoid automatic data use */
+.lesson-audio {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.lesson-audio-data-note,
+.lesson-audio-description {
+    margin-bottom: 0.75rem;
+}
+
+.lesson-audio-load,
+.lesson-audio-download {
+    display: inline-block;
+    margin-right: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.lesson-audio-player {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+}
+
+.lesson-audio-transcript {
+    margin-top: 0.75rem;
+}
