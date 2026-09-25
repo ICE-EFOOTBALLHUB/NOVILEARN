@@ -671,6 +671,39 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // IMAGE
+    // ==============================
+
+    if (
+        block.type === "image"
+    ) {
+
+        const imageContent =
+            block.content || {};
+
+        const captionHTML =
+            imageContent.caption
+                ? `<figcaption>${imageContent.caption}</figcaption>`
+                : "";
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Image"}
+            </h3>
+
+            <figure class="lesson-image">
+                <img
+                    src="${imageContent.src || ""}"
+                    alt="${imageContent.alt || ""}"
+                >
+                ${captionHTML}
+            </figure>
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
