@@ -58,6 +58,41 @@
       "content": "2 + 3 = 5"
     },
     {
+      "id": "block-table-001",
+      "type": "table",
+      "requiredToContinue": false,
+      "title": "Addition Facts",
+      "content": {
+        "headers": [
+          "First Number",
+          "Second Number",
+          "Total"
+        ],
+        "rows": [
+          [
+            "1",
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "1",
+            "3"
+          ],
+          [
+            "2",
+            "2",
+            "4"
+          ],
+          [
+            "2",
+            "3",
+            "5"
+          ]
+        ]
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
