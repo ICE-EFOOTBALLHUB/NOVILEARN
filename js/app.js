@@ -450,6 +450,7 @@ async function showLesson(
 
 currentLesson = lesson;
 currentBlockIndex = 0;
+        completedBlocks = {};
         
         levelsContainer.innerHTML = "";
 
