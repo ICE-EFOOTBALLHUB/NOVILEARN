@@ -51,6 +51,13 @@
       "content": "Addition combines two or more quantities to make a total."
     },
     {
+      "id": "block-formula-001",
+      "type": "formula",
+      "requiredToContinue": false,
+      "title": "Addition Formula",
+      "content": "2 + 3 = 5"
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
