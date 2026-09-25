@@ -744,6 +744,66 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // VIDEO
+    // ==============================
+
+    if (
+        block.type === "video"
+    ) {
+
+        const videoContent =
+            block.content || {};
+
+        const descriptionHTML =
+            videoContent.description
+                ? `<p class="lesson-video-description">${videoContent.description}</p>`
+                : "";
+
+        const downloadHTML =
+            videoContent.downloadable !== false && videoContent.src
+                ? `<a class="lesson-video-download" href="${videoContent.src}" download target="_blank" rel="noopener">Download Video</a>`
+                : "";
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Video"}
+            </h3>
+
+            ${descriptionHTML}
+
+            <div class="lesson-video" data-video-src="${videoContent.src || ""}" data-video-type="${videoContent.mimeType || "video/mp4"}">
+                <p class="lesson-video-data-note">
+                    This video will not load until you choose to play it.
+                </p>
+                <button type="button" class="lesson-video-load">
+                    Play Video
+                </button>
+                ${downloadHTML}
+            </div>
+        `;
+
+        const videoContainer =
+            blockElement.querySelector(".lesson-video");
+
+        const loadVideoButton =
+            blockElement.querySelector(".lesson-video-load");
+
+        if (loadVideoButton && videoContent.src) {
+            loadVideoButton.addEventListener("click", () => {
+                videoContainer.innerHTML = `
+                    <video class="lesson-video-player" controls preload="metadata">
+                        <source src="${videoContent.src}" type="${videoContent.mimeType || "video/mp4"}">
+                        Your browser does not support HTML video.
+                    </video>
+                    ${downloadHTML}
+                `;
+            });
+        }
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
