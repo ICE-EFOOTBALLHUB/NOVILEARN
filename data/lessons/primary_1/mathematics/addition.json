@@ -93,6 +93,24 @@
       }
     },
     {
+      "id": "block-comparison-001",
+      "type": "comparison",
+      "requiredToContinue": false,
+      "title": "Addition and Subtraction",
+      "content": {
+        "items": [
+          {
+            "title": "Addition",
+            "content": "Puts quantities together to make a total. Example: 2 + 3 = 5."
+          },
+          {
+            "title": "Subtraction",
+            "content": "Takes one quantity away from another. Example: 5 - 2 = 3."
+          }
+        ]
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
