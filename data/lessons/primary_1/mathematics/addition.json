@@ -146,6 +146,19 @@
       }
     },
     {
+      "id": "block-audio-001",
+      "type": "audio",
+      "requiredToContinue": false,
+      "title": "Audio Test",
+      "content": {
+        "src": "https://developer.mozilla.org/shared-assets/audio/t-rex-roar.mp3",
+        "mimeType": "audio/mpeg",
+        "description": "A short public test audio clip used to verify NOVILEARN's click-to-load audio block. It is not part of the Addition lesson content.",
+        "transcript": "Test sound effect: a T-Rex roar.",
+        "downloadable": true
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
