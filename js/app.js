@@ -443,6 +443,13 @@ async function showLesson(
         const lesson =
             await response.json();
 
+// ==============================
+// INITIALIZE LESSON ENGINE
+// ==============================
+
+currentLesson = lesson;
+currentBlockIndex = 0;
+        
         levelsContainer.innerHTML = "";
 
         levelsContainer.appendChild(
