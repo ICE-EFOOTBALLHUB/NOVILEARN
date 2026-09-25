@@ -704,6 +704,46 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // DIAGRAM
+    // ==============================
+
+    if (
+        block.type === "diagram"
+    ) {
+
+        const diagramContent =
+            block.content || {};
+
+        const captionHTML =
+            diagramContent.caption
+                ? `<figcaption>${diagramContent.caption}</figcaption>`
+                : "";
+
+        const descriptionHTML =
+            diagramContent.description
+                ? `<p class="lesson-diagram-description">${diagramContent.description}</p>`
+                : "";
+
+        blockElement.innerHTML = `
+            <h3>
+                ${block.title || "Diagram"}
+            </h3>
+
+            <figure class="lesson-diagram">
+                <img
+                    src="${diagramContent.src || ""}"
+                    alt="${diagramContent.alt || ""}"
+                >
+                ${captionHTML}
+            </figure>
+
+            ${descriptionHTML}
+        `;
+
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
