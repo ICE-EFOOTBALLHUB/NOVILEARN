@@ -134,6 +134,18 @@
       }
     },
     {
+      "id": "block-video-001",
+      "type": "video",
+      "requiredToContinue": false,
+      "title": "Video Test",
+      "content": {
+        "src": "https://developer.mozilla.org/shared-assets/videos/flower.mp4",
+        "mimeType": "video/mp4",
+        "description": "A short public test video used to verify NOVILEARN's click-to-load video block. It is not part of the Addition lesson content.",
+        "downloadable": true
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
