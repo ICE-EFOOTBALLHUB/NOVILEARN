@@ -741,6 +741,14 @@ if (
     );
 
                 }
+
+// ==============================
+// START LESSON ENGINE
+// ==============================
+
+renderCurrentLessonBlock();
+
+return;
         
         lesson.blocks.forEach(
     block => {
