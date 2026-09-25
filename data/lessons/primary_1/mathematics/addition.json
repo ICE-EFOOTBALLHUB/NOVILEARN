@@ -122,6 +122,18 @@
       }
     },
     {
+      "id": "block-diagram-001",
+      "type": "diagram",
+      "requiredToContinue": false,
+      "title": "Addition Number Line",
+      "content": {
+        "src": "./assets/images/addition-number-line.svg",
+        "alt": "A number line showing two jumps starting at 2 and moving three spaces to land on 5.",
+        "caption": "Start at 2 and move 3 steps forward to reach 5.",
+        "description": "The number line shows addition as moving forward: 2 + 3 = 5."
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
