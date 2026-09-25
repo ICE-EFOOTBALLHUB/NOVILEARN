@@ -114,3 +114,23 @@ h2 {
 .lesson-image figcaption {
     margin-top: 0.5rem;
 }
+
+
+/* Lesson diagram block - development styling */
+.lesson-diagram {
+    margin: 1rem 0;
+}
+
+.lesson-diagram img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.lesson-diagram figcaption {
+    margin-top: 0.5rem;
+}
+
+.lesson-diagram-description {
+    margin-top: 0.75rem;
+}
