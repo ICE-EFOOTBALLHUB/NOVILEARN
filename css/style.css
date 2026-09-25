@@ -134,3 +134,31 @@ h2 {
 .lesson-diagram-description {
     margin-top: 0.75rem;
 }
+
+
+/* Lesson video block - click-to-load to avoid automatic data use */
+.lesson-video {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.lesson-video-data-note,
+.lesson-video-description {
+    margin-bottom: 0.75rem;
+}
+
+.lesson-video-load,
+.lesson-video-download {
+    display: inline-block;
+    margin-right: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.lesson-video-player {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+}
