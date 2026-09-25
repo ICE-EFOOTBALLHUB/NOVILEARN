@@ -878,28 +878,39 @@ renderCurrentLessonBlock = function() {
         block.type === "animation"
     ) {
 
-        const animationContent =
-            block.content || {};
+        const animationContent = block.content || {};
+        const startValue = Number.isFinite(Number(animationContent.startValue))
+            ? Number(animationContent.startValue)
+            : 2;
+        const changeValue = Number.isFinite(Number(animationContent.changeValue))
+            ? Number(animationContent.changeValue)
+            : 3;
+        const resultValue = startValue + changeValue;
 
-        const descriptionHTML =
-            animationContent.description
-                ? `<p class="lesson-animation-description">${animationContent.description}</p>`
-                : "";
+        // Always include 0 and leave a little room around the values used.
+        const minimum = Math.min(0, startValue, resultValue) - (resultValue < 0 ? 1 : 0);
+        const maximum = Math.max(0, startValue, resultValue) + 1;
+        const lineValues = [];
+        for (let value = minimum; value <= maximum; value++) {
+            lineValues.push(value);
+        }
+
+        const descriptionHTML = animationContent.description
+            ? `<p class="lesson-animation-description">${animationContent.description}</p>`
+            : "";
 
         blockElement.innerHTML = `
-            <h3>
-                ${block.title || "Animation"}
-            </h3>
-
+            <h3>${block.title || "Animation"}</h3>
             ${descriptionHTML}
 
             <div class="lesson-animation">
                 <div class="lesson-animation-stage" aria-label="${animationContent.alt || "Educational animation"}">
+                    <div class="lesson-animation-operation" aria-live="polite"></div>
                     <div class="lesson-animation-number-line">
-                        ${[0,1,2,3,4,5,6,7].map(number => `<span>${number}</span>`).join("")}
+                        ${lineValues.map(value => `<span class="lesson-animation-tick" data-value="${value}">${value}</span>`).join("")}
                         <div class="lesson-animation-marker" aria-hidden="true">●</div>
                     </div>
-                    <p class="lesson-animation-equation">2 + 3 = 5</p>
+                    <p class="lesson-animation-equation" aria-live="polite"></p>
                 </div>
 
                 <div class="lesson-animation-controls">
@@ -910,37 +921,157 @@ renderCurrentLessonBlock = function() {
             </div>
         `;
 
-        const marker =
-            blockElement.querySelector(".lesson-animation-marker");
+        const line = blockElement.querySelector(".lesson-animation-number-line");
+        const marker = blockElement.querySelector(".lesson-animation-marker");
+        const operation = blockElement.querySelector(".lesson-animation-operation");
+        const equation = blockElement.querySelector(".lesson-animation-equation");
+        const playButton = blockElement.querySelector(".lesson-animation-play");
+        const pauseButton = blockElement.querySelector(".lesson-animation-pause");
+        const restartButton = blockElement.querySelector(".lesson-animation-restart");
 
-        const playButton =
-            blockElement.querySelector(".lesson-animation-play");
+        if (line && marker && operation && equation && playButton && pauseButton && restartButton) {
+            let animationFrame = null;
+            let running = false;
+            let paused = false;
+            let segmentIndex = 0;
+            let segmentProgress = 0;
+            let lastTimestamp = null;
 
-        const pauseButton =
-            blockElement.querySelector(".lesson-animation-pause");
+            const movementSegments = [];
 
-        const restartButton =
-            blockElement.querySelector(".lesson-animation-restart");
+            // First show how we reach the starting value from zero.
+            if (startValue !== 0) {
+                movementSegments.push({
+                    from: 0,
+                    to: startValue,
+                    label: `${startValue >= 0 ? "+" : ""}${startValue}`,
+                    duration: Math.max(700, Math.abs(startValue) * 350)
+                });
+            }
 
-        if (marker && playButton && pauseButton && restartButton) {
+            // Then move one number-line unit at a time for the operation itself.
+            const direction = changeValue >= 0 ? 1 : -1;
+            for (let step = 0; step < Math.abs(changeValue); step++) {
+                movementSegments.push({
+                    from: startValue + (step * direction),
+                    to: startValue + ((step + 1) * direction),
+                    label: step === 0 ? `${changeValue >= 0 ? "+" : ""}${changeValue}` : "",
+                    duration: 550
+                });
+            }
+
+            const getTickCenter = value => {
+                const tick = line.querySelector(`[data-value="${value}"]`);
+                if (!tick) return 0;
+                return tick.offsetLeft + (tick.offsetWidth / 2);
+            };
+
+            const placeMarker = (from, to, progress) => {
+                const fromX = getTickCenter(from);
+                const toX = getTickCenter(to);
+                const x = fromX + ((toX - fromX) * progress);
+                const jumpHeight = Math.sin(Math.PI * progress) * 24;
+                marker.style.left = `${x}px`;
+                marker.style.transform = `translate(-50%, ${-jumpHeight}px)`;
+            };
+
+            const showSegmentLabel = segment => {
+                operation.textContent = segment ? segment.label : "";
+            };
+
+            const resetAnimation = () => {
+                if (animationFrame) cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+                running = false;
+                paused = false;
+                segmentIndex = 0;
+                segmentProgress = 0;
+                lastTimestamp = null;
+                operation.textContent = "";
+                equation.textContent = "";
+                marker.style.left = `${getTickCenter(0)}px`;
+                marker.style.transform = "translate(-50%, 0)";
+            };
+
+            const finishAnimation = () => {
+                running = false;
+                paused = false;
+                animationFrame = null;
+                operation.textContent = "";
+                equation.textContent = `${startValue} ${changeValue >= 0 ? "+" : "-"} ${Math.abs(changeValue)} = ${resultValue}`;
+                marker.style.left = `${getTickCenter(resultValue)}px`;
+                marker.style.transform = "translate(-50%, 0)";
+            };
+
+            const stepAnimation = timestamp => {
+                if (!running || paused) return;
+
+                if (segmentIndex >= movementSegments.length) {
+                    finishAnimation();
+                    return;
+                }
+
+                const segment = movementSegments[segmentIndex];
+                if (lastTimestamp === null) {
+                    lastTimestamp = timestamp;
+                    showSegmentLabel(segment);
+                }
+
+                const elapsed = timestamp - lastTimestamp;
+                segmentProgress = Math.min(1, elapsed / segment.duration);
+                placeMarker(segment.from, segment.to, segmentProgress);
+
+                if (segmentProgress >= 1) {
+                    segmentIndex++;
+                    segmentProgress = 0;
+                    lastTimestamp = null;
+                }
+
+                animationFrame = requestAnimationFrame(stepAnimation);
+            };
+
             playButton.addEventListener("click", () => {
-                marker.classList.add("is-playing");
-                marker.style.animationPlayState = "running";
+                if (!movementSegments.length) {
+                    finishAnimation();
+                    return;
+                }
+
+                if (!running) {
+                    running = true;
+                    paused = false;
+                    lastTimestamp = null;
+                    animationFrame = requestAnimationFrame(stepAnimation);
+                    return;
+                }
+
+                if (paused) {
+                    paused = false;
+                    lastTimestamp = null;
+                    animationFrame = requestAnimationFrame(stepAnimation);
+                }
             });
 
             pauseButton.addEventListener("click", () => {
-                marker.style.animationPlayState = "paused";
+                if (!running || paused) return;
+                paused = true;
+                if (animationFrame) cancelAnimationFrame(animationFrame);
+                animationFrame = null;
             });
 
             restartButton.addEventListener("click", () => {
-                marker.classList.remove("is-playing");
-                marker.style.animationPlayState = "paused";
-                void marker.offsetWidth;
-                marker.classList.add("is-playing");
-                marker.style.animationPlayState = "running";
+                resetAnimation();
+                running = true;
+                animationFrame = requestAnimationFrame(stepAnimation);
             });
-        }
 
+            window.addEventListener("resize", () => {
+                if (!running) {
+                    marker.style.left = `${getTickCenter(segmentIndex >= movementSegments.length ? resultValue : 0)}px`;
+                }
+            });
+
+            requestAnimationFrame(resetAnimation);
+        }
     }
 
 
