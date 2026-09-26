@@ -351,3 +351,83 @@ h2 {
     .lesson-interactive-hint-hand { left: 10%; top: 48px; }
 }
 
+
+
+/* Lesson simulation block - development styling */
+.lesson-simulation-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: end;
+    margin: 1rem 0;
+}
+
+.lesson-simulation-controls label {
+    display: grid;
+    gap: 0.3rem;
+    font-weight: bold;
+}
+
+.lesson-simulation-controls input {
+    width: 7rem;
+    padding: 0.55rem;
+    font: inherit;
+}
+
+.lesson-simulation-controls button { padding: 0.6rem 0.9rem; }
+
+.lesson-simulation-stage {
+    margin-top: 1rem;
+    padding: 1rem 0.75rem;
+    overflow-x: auto;
+}
+
+.lesson-simulation-operation {
+    min-height: 1.6rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.lesson-simulation-number-line {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-width: 520px;
+    margin: 3rem 1rem 1rem;
+    border-top: 3px solid currentColor;
+}
+
+.lesson-simulation-tick {
+    position: relative;
+    min-width: 1.5rem;
+    padding-top: 0.65rem;
+    text-align: center;
+}
+
+.lesson-simulation-tick::before {
+    content: "";
+    position: absolute;
+    top: -0.45rem;
+    left: 50%;
+    width: 2px;
+    height: 0.75rem;
+    transform: translateX(-50%);
+    background: currentColor;
+}
+
+.lesson-simulation-marker {
+    position: absolute;
+    top: -2rem;
+    left: 0;
+    transform: translateX(-50%);
+    font-size: 1.7rem;
+    line-height: 1;
+    transition: left 0.32s ease;
+}
+
+.lesson-simulation-equation {
+    min-height: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+}
