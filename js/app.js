@@ -1107,6 +1107,125 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // INTERACTIVE
+    // ==============================
+
+    if (
+        block.type === "interactive"
+    ) {
+
+        const interactiveContent = block.content || {};
+        const activityType = interactiveContent.activityType || "moveItems";
+
+        if (activityType === "moveItems") {
+            const startingCount = Number(interactiveContent.startingCount) || 0;
+            const moveCount = Number(interactiveContent.moveCount) || 0;
+            const item = interactiveContent.item || "🍎";
+            const targetTotal = startingCount + moveCount;
+
+            const fixedItemsHTML = Array.from(
+                { length: startingCount },
+                (_, index) => `<span class="lesson-interactive-item is-fixed" aria-label="Starting item ${index + 1}">${item}</span>`
+            ).join("");
+
+            const movableItemsHTML = Array.from(
+                { length: moveCount },
+                (_, index) => `<button type="button" class="lesson-interactive-item is-movable" draggable="true" data-item-index="${index}" aria-label="Move item ${index + 1} into the group">${item}</button>`
+            ).join("");
+
+            blockElement.innerHTML = `
+                <h3>${block.title || "Interactive Activity"}</h3>
+                <p>${interactiveContent.instruction || "Move the items into the group."}</p>
+
+                <div class="lesson-interactive-move-items">
+                    <div class="lesson-interactive-drag-hint" aria-hidden="true">
+                        <span class="lesson-interactive-hint-hand">☝️</span>
+                    </div>
+                    <div class="lesson-interactive-source" aria-label="Items to move">
+                        <p><strong>Move these:</strong></p>
+                        <div class="lesson-interactive-items">${movableItemsHTML}</div>
+                    </div>
+
+                    <div class="lesson-interactive-target" tabindex="0" aria-label="Target group. Drop or tap items here.">
+                        <p><strong>Group:</strong></p>
+                        <div class="lesson-interactive-target-items">${fixedItemsHTML}</div>
+                    </div>
+                </div>
+
+                <p class="lesson-interactive-status" aria-live="polite">
+                    0 of ${moveCount} moved.
+                </p>
+            `;
+
+            const source = blockElement.querySelector(".lesson-interactive-source");
+            const target = blockElement.querySelector(".lesson-interactive-target");
+            const targetItems = blockElement.querySelector(".lesson-interactive-target-items");
+            const status = blockElement.querySelector(".lesson-interactive-status");
+            const dragHint = blockElement.querySelector(".lesson-interactive-drag-hint");
+            let movedCount = 0;
+            let interactionStarted = false;
+
+            const hideDragHint = () => {
+                if (interactionStarted) return;
+                interactionStarted = true;
+                if (dragHint) dragHint.classList.add("is-hidden");
+            };
+
+            const moveItem = itemButton => {
+                if (!itemButton || itemButton.dataset.moved === "true") return;
+
+                itemButton.dataset.moved = "true";
+                itemButton.draggable = false;
+                itemButton.classList.remove("is-movable");
+                itemButton.classList.add("is-moved");
+                targetItems.appendChild(itemButton);
+                movedCount++;
+
+                if (movedCount >= moveCount) {
+                    completedBlocks[block.id] = true;
+                    status.textContent = `${movedCount} of ${moveCount} moved. ${startingCount} + ${moveCount} = ${targetTotal}. Activity complete!`;
+                    target.classList.add("is-complete");
+                } else {
+                    status.textContent = `${movedCount} of ${moveCount} moved.`;
+                }
+            };
+
+            blockElement.querySelectorAll(".lesson-interactive-item.is-movable").forEach(itemButton => {
+                itemButton.addEventListener("dragstart", event => {
+                    hideDragHint();
+                    event.dataTransfer.setData("text/plain", itemButton.dataset.itemIndex);
+                    event.dataTransfer.effectAllowed = "move";
+                });
+
+                // Tap/click fallback makes the same activity usable on touch devices.
+                itemButton.addEventListener("click", () => {
+                    hideDragHint();
+                    moveItem(itemButton);
+                });
+            });
+
+            target.addEventListener("dragover", event => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+                target.classList.add("is-drag-over");
+            });
+
+            target.addEventListener("dragleave", () => {
+                target.classList.remove("is-drag-over");
+            });
+
+            target.addEventListener("drop", event => {
+                event.preventDefault();
+                target.classList.remove("is-drag-over");
+                const itemIndex = event.dataTransfer.getData("text/plain");
+                const itemButton = source.querySelector(`[data-item-index="${itemIndex}"]`);
+                moveItem(itemButton);
+            });
+        }
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
