@@ -1141,13 +1141,11 @@ renderCurrentLessonBlock = function() {
                     <div class="lesson-interactive-drag-hint" aria-hidden="true">
                         <span class="lesson-interactive-hint-hand">☝️</span>
                     </div>
-                    <div class="lesson-interactive-source" aria-label="Items to move">
-                        <p><strong>Move these:</strong></p>
-                        <div class="lesson-interactive-items">${movableItemsHTML}</div>
-                    </div>
 
-                    <div class="lesson-interactive-target" tabindex="0" aria-label="Target group. Drop or tap items here.">
-                        <p><strong>Group:</strong></p>
+                    <p class="lesson-interactive-move-label"><strong>Drag these apples into the field:</strong></p>
+                    <div class="lesson-interactive-items" aria-label="Items to move">${movableItemsHTML}</div>
+
+                    <div class="lesson-interactive-target" tabindex="0" aria-label="Addition field. Drop or tap apples here.">
                         <div class="lesson-interactive-target-items">${fixedItemsHTML}</div>
                     </div>
                 </div>
@@ -1157,7 +1155,6 @@ renderCurrentLessonBlock = function() {
                 </p>
             `;
 
-            const source = blockElement.querySelector(".lesson-interactive-source");
             const target = blockElement.querySelector(".lesson-interactive-target");
             const targetItems = blockElement.querySelector(".lesson-interactive-target-items");
             const status = blockElement.querySelector(".lesson-interactive-status");
@@ -1218,7 +1215,7 @@ renderCurrentLessonBlock = function() {
                 event.preventDefault();
                 target.classList.remove("is-drag-over");
                 const itemIndex = event.dataTransfer.getData("text/plain");
-                const itemButton = source.querySelector(`[data-item-index="${itemIndex}"]`);
+                const itemButton = blockElement.querySelector(`.lesson-interactive-item[data-item-index="${itemIndex}"]`);
                 moveItem(itemButton);
             });
         }
