@@ -1223,6 +1223,146 @@ renderCurrentLessonBlock = function() {
 
 
     // ==============================
+    // SIMULATION
+    // ==============================
+
+    if (block.type === "simulation") {
+        const simulationContent = block.content || {};
+        const simulationType = simulationContent.simulationType || "numberLine";
+
+        if (simulationType === "numberLine") {
+            const defaultStart = Number.isFinite(Number(simulationContent.startValue)) ? Number(simulationContent.startValue) : 2;
+            const defaultChange = Number.isFinite(Number(simulationContent.changeValue)) ? Number(simulationContent.changeValue) : 3;
+            const minInput = Number.isFinite(Number(simulationContent.minValue)) ? Number(simulationContent.minValue) : -10;
+            const maxInput = Number.isFinite(Number(simulationContent.maxValue)) ? Number(simulationContent.maxValue) : 10;
+
+            blockElement.innerHTML = `
+                <h3>${block.title || "Number Line Simulation"}</h3>
+                <p>${simulationContent.instruction || "Change the values and observe what happens on the number line."}</p>
+
+                <div class="lesson-simulation-controls">
+                    <label>
+                        Starting number
+                        <input class="lesson-simulation-start" type="number" min="${minInput}" max="${maxInput}" value="${defaultStart}">
+                    </label>
+                    <label>
+                        Change
+                        <input class="lesson-simulation-change" type="number" min="${minInput}" max="${maxInput}" value="${defaultChange}">
+                    </label>
+                    <button type="button" class="lesson-simulation-run">Run Simulation</button>
+                </div>
+
+                <div class="lesson-simulation-stage">
+                    <div class="lesson-simulation-operation" aria-live="polite"></div>
+                    <div class="lesson-simulation-number-line" aria-label="Dynamic number line"></div>
+                    <p class="lesson-simulation-equation" aria-live="polite"></p>
+                </div>
+            `;
+
+            const startInput = blockElement.querySelector(".lesson-simulation-start");
+            const changeInput = blockElement.querySelector(".lesson-simulation-change");
+            const runButton = blockElement.querySelector(".lesson-simulation-run");
+            const line = blockElement.querySelector(".lesson-simulation-number-line");
+            const operation = blockElement.querySelector(".lesson-simulation-operation");
+            const equation = blockElement.querySelector(".lesson-simulation-equation");
+            let timers = [];
+
+            const clearTimers = () => {
+                timers.forEach(timer => clearTimeout(timer));
+                timers = [];
+            };
+
+            const clamp = value => Math.max(minInput, Math.min(maxInput, value));
+
+            const renderLine = (start, change) => {
+                const result = start + change;
+                const low = Math.min(0, start, result) - 1;
+                const high = Math.max(0, start, result) + 1;
+                const values = [];
+                for (let value = low; value <= high; value++) values.push(value);
+
+                line.innerHTML = `
+                    ${values.map(value => `<span class="lesson-simulation-tick" data-value="${value}">${value}</span>`).join("")}
+                    <div class="lesson-simulation-marker" aria-hidden="true">●</div>
+                `;
+
+                return result;
+            };
+
+            const getTickCenter = value => {
+                const tick = line.querySelector(`[data-value="${value}"]`);
+                return tick ? tick.offsetLeft + (tick.offsetWidth / 2) : 0;
+            };
+
+            const placeMarker = value => {
+                const markerElement = line.querySelector(".lesson-simulation-marker");
+                if (markerElement) markerElement.style.left = `${getTickCenter(value)}px`;
+            };
+
+            const runSimulation = () => {
+                clearTimers();
+                let start = clamp(Math.round(Number(startInput.value) || 0));
+                let change = clamp(Math.round(Number(changeInput.value) || 0));
+                startInput.value = start;
+                changeInput.value = change;
+
+                const result = renderLine(start, change);
+                const sign = change >= 0 ? "+" : "−";
+                const direction = change >= 0 ? 1 : -1;
+                const markerElement = line.querySelector(".lesson-simulation-marker");
+
+                equation.textContent = "";
+                operation.textContent = `Start at ${start}`;
+                requestAnimationFrame(() => placeMarker(start));
+
+                let current = start;
+                const steps = Math.abs(change);
+
+                if (steps === 0) {
+                    timers.push(setTimeout(() => {
+                        operation.textContent = "No change";
+                        equation.textContent = `${start} + 0 = ${result}`;
+                        completedBlocks[block.id] = true;
+                    }, 450));
+                    return;
+                }
+
+                timers.push(setTimeout(() => {
+                    operation.textContent = `${sign}${Math.abs(change)}`;
+                }, 500));
+
+                for (let step = 1; step <= steps; step++) {
+                    timers.push(setTimeout(() => {
+                        current += direction;
+                        if (markerElement) markerElement.style.left = `${getTickCenter(current)}px`;
+
+                        if (step === steps) {
+                            timers.push(setTimeout(() => {
+                                operation.textContent = "";
+                                equation.textContent = `${start} ${sign} ${Math.abs(change)} = ${result}`;
+                                completedBlocks[block.id] = true;
+                            }, 350));
+                        }
+                    }, 650 + (step * 450)));
+                }
+            };
+
+            runButton.addEventListener("click", runSimulation);
+            [startInput, changeInput].forEach(input => {
+                input.addEventListener("keydown", event => {
+                    if (event.key === "Enter") runSimulation();
+                });
+            });
+
+            const initialResult = renderLine(defaultStart, defaultChange);
+            operation.textContent = "Change the values, then run the simulation.";
+            equation.textContent = `Current values: ${defaultStart} ${defaultChange >= 0 ? "+" : "−"} ${Math.abs(defaultChange)} = ${initialResult}`;
+            requestAnimationFrame(() => placeMarker(defaultStart));
+        }
+    }
+
+
+    // ==============================
     // EXAMPLE
     // ==============================
 
