@@ -271,12 +271,12 @@ h2 {
 /* Lesson interactive block - development styling */
 .lesson-interactive-move-items {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
     margin: 1rem 0;
 }
 
+.lesson-interactive-move-label {
+    margin-bottom: 0.5rem;
+}
 
 .lesson-interactive-drag-hint {
     position: absolute;
@@ -287,14 +287,12 @@ h2 {
     transition: opacity 0.2s ease;
 }
 
-.lesson-interactive-drag-hint.is-hidden {
-    opacity: 0;
-}
+.lesson-interactive-drag-hint.is-hidden { opacity: 0; }
 
 .lesson-interactive-hint-hand {
     position: absolute;
-    left: 22%;
-    top: 58%;
+    left: 8%;
+    top: 48px;
     font-size: 2rem;
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
     animation: lesson-interactive-drag-demo 2.2s ease-in-out infinite;
@@ -303,20 +301,27 @@ h2 {
 @keyframes lesson-interactive-drag-demo {
     0%, 15% { transform: translate(0, 0) scale(1); opacity: 0; }
     25% { opacity: 1; transform: translate(0, 0) scale(0.9); }
-    70% { opacity: 1; transform: translate(260px, 0) scale(0.9); }
-    82% { opacity: 1; transform: translate(260px, 0) scale(1); }
-    100% { opacity: 0; transform: translate(260px, 0) scale(1); }
+    70% { opacity: 1; transform: translate(55px, 105px) scale(0.9); }
+    82% { opacity: 1; transform: translate(55px, 105px) scale(1); }
+    100% { opacity: 0; transform: translate(55px, 105px) scale(1); }
 }
 
-.lesson-interactive-source,
+.lesson-interactive-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 58px;
+    margin-bottom: 1rem;
+}
+
 .lesson-interactive-target {
-    min-height: 130px;
+    min-height: 150px;
     padding: 1rem;
     border: 2px dashed #aaa;
     border-radius: 8px;
 }
 
-.lesson-interactive-items,
 .lesson-interactive-target-items {
     display: flex;
     flex-wrap: wrap;
@@ -337,40 +342,12 @@ h2 {
     line-height: 1;
 }
 
-.lesson-interactive-item.is-movable {
-    cursor: grab;
-}
-
-.lesson-interactive-target.is-drag-over {
-    outline: 3px solid currentColor;
-    outline-offset: 2px;
-}
-
-.lesson-interactive-target.is-complete {
-    border-style: solid;
-}
-
-.lesson-interactive-status {
-    min-height: 1.5rem;
-    font-weight: bold;
-}
+.lesson-interactive-item.is-movable { cursor: grab; }
+.lesson-interactive-target.is-drag-over { outline: 3px solid currentColor; outline-offset: 2px; }
+.lesson-interactive-target.is-complete { border-style: solid; }
+.lesson-interactive-status { min-height: 1.5rem; font-weight: bold; }
 
 @media (max-width: 600px) {
-    .lesson-interactive-move-items {
-        grid-template-columns: 1fr;
-    }
-
-    .lesson-interactive-hint-hand {
-        left: 45%;
-        top: 27%;
-        animation-name: lesson-interactive-drag-demo-mobile;
-    }
-
-    @keyframes lesson-interactive-drag-demo-mobile {
-        0%, 15% { transform: translate(0, 0) scale(1); opacity: 0; }
-        25% { opacity: 1; transform: translate(0, 0) scale(0.9); }
-        70% { opacity: 1; transform: translate(0, 145px) scale(0.9); }
-        82% { opacity: 1; transform: translate(0, 145px) scale(1); }
-        100% { opacity: 0; transform: translate(0, 145px) scale(1); }
-    }
+    .lesson-interactive-hint-hand { left: 10%; top: 48px; }
 }
+
