@@ -184,6 +184,20 @@
       }
     },
     {
+      "id": "block-simulation-001",
+      "type": "simulation",
+      "requiredToContinue": false,
+      "title": "Explore Addition and Subtraction",
+      "content": {
+        "simulationType": "numberLine",
+        "instruction": "Choose a starting number and a change. Run the simulation to see how the value moves on the number line.",
+        "startValue": 2,
+        "changeValue": 3,
+        "minValue": -10,
+        "maxValue": 10
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
