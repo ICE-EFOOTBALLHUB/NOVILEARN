@@ -171,6 +171,19 @@
       }
     },
     {
+      "id": "block-interactive-001",
+      "type": "interactive",
+      "requiredToContinue": true,
+      "title": "Build 2 + 3",
+      "content": {
+        "activityType": "moveItems",
+        "instruction": "Drag the 3 apples into the group with 2 apples. On a touch device, you can tap each apple instead.",
+        "item": "🍎",
+        "startingCount": 2,
+        "moveCount": 3
+      }
+    },
+    {
       "id": "block-004",
       "type": "example",
       "requiredToContinue": false,
